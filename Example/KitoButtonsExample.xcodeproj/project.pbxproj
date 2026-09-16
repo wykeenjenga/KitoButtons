@@ -7,23 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0D6489002EEBF9CACAC62E6F /* CartAnimationsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5BBADC2C2D22DA3857E8C1F /* CartAnimationsScreen.swift */; };
+		105535055AD2DE7451F1F71D /* Sample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B1722F80FAB09A7F92BC4F /* Sample.swift */; };
+		49D05FFD0FC16AEAF439161B /* SamplesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4BCDF174580CA34C620EF6 /* SamplesScreen.swift */; };
 		623F70E54889E7C0C2727A4A /* KitoButtons in Frameworks */ = {isa = PBXBuildFile; productRef = 65B1BAE1CF874BCA11802731 /* KitoButtons */; };
 		863924E8416FBAA4AEE4A48D /* ShopScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 813B922B839E1154D07955A8 /* ShopScreen.swift */; };
-		BB2A4F1644AB7FBAD7F67A8F /* GalleryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4DB1B4190E8BF62C144C69 /* GalleryScreen.swift */; };
-		BD52FC0E382BCAFFC953B6CA /* PhasesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C776221CC45C16D807C77CA /* PhasesScreen.swift */; };
+		9EBBD261635A1EA8FA7FD9C7 /* SampleCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0634DBA70F72C353B3B827F /* SampleCatalog.swift */; };
 		D18F88D42EBC1632490D6258 /* KitoButtonsExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD236ADADCDF7953AF58C434 /* KitoButtonsExampleApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		03CCA08C2C9C4CEF214959D7 /* wt-buttons-gallery */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "wt-buttons-gallery"; path = ..; sourceTree = SOURCE_ROOT; };
+		0D4BCDF174580CA34C620EF6 /* SamplesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SamplesScreen.swift; sourceTree = "<group>"; };
 		26D6365EBBC3144172912AB1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		5C776221CC45C16D807C77CA /* PhasesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhasesScreen.swift; sourceTree = "<group>"; };
+		47B1722F80FAB09A7F92BC4F /* Sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sample.swift; sourceTree = "<group>"; };
 		6BF0B9F482982A5405CECACD /* KitoButtonsExample.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = KitoButtonsExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		6C4DB1B4190E8BF62C144C69 /* GalleryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryScreen.swift; sourceTree = "<group>"; };
 		813B922B839E1154D07955A8 /* ShopScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopScreen.swift; sourceTree = "<group>"; };
-		83CC7637518AE043E7A5C834 /* KitoButtons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = KitoButtons; path = ..; sourceTree = SOURCE_ROOT; };
+		A0634DBA70F72C353B3B827F /* SampleCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleCatalog.swift; sourceTree = "<group>"; };
 		CD236ADADCDF7953AF58C434 /* KitoButtonsExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitoButtonsExampleApp.swift; sourceTree = "<group>"; };
-		E5BBADC2C2D22DA3857E8C1F /* CartAnimationsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartAnimationsScreen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,12 +41,10 @@
 		388F3A82925666C30C38AC7D /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				E5BBADC2C2D22DA3857E8C1F /* CartAnimationsScreen.swift */,
-				6C4DB1B4190E8BF62C144C69 /* GalleryScreen.swift */,
 				26D6365EBBC3144172912AB1 /* Info.plist */,
 				CD236ADADCDF7953AF58C434 /* KitoButtonsExampleApp.swift */,
-				5C776221CC45C16D807C77CA /* PhasesScreen.swift */,
 				813B922B839E1154D07955A8 /* ShopScreen.swift */,
+				D69A48BF834E88D9B15AD499 /* Samples */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -63,7 +61,7 @@
 		7D2CA6BB2BDBF354D52BF728 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				83CC7637518AE043E7A5C834 /* KitoButtons */,
+				03CCA08C2C9C4CEF214959D7 /* wt-buttons-gallery */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -74,6 +72,16 @@
 				6BF0B9F482982A5405CECACD /* KitoButtonsExample.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D69A48BF834E88D9B15AD499 /* Samples */ = {
+			isa = PBXGroup;
+			children = (
+				47B1722F80FAB09A7F92BC4F /* Sample.swift */,
+				A0634DBA70F72C353B3B827F /* SampleCatalog.swift */,
+				0D4BCDF174580CA34C620EF6 /* SamplesScreen.swift */,
+			);
+			path = Samples;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -136,10 +144,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0D6489002EEBF9CACAC62E6F /* CartAnimationsScreen.swift in Sources */,
-				BB2A4F1644AB7FBAD7F67A8F /* GalleryScreen.swift in Sources */,
 				D18F88D42EBC1632490D6258 /* KitoButtonsExampleApp.swift in Sources */,
-				BD52FC0E382BCAFFC953B6CA /* PhasesScreen.swift in Sources */,
+				105535055AD2DE7451F1F71D /* Sample.swift in Sources */,
+				9EBBD261635A1EA8FA7FD9C7 /* SampleCatalog.swift in Sources */,
+				49D05FFD0FC16AEAF439161B /* SamplesScreen.swift in Sources */,
 				863924E8416FBAA4AEE4A48D /* ShopScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

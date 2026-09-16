@@ -16,10 +16,11 @@ struct KitoButtonsExampleApp: App {
     }
 }
 
-/// Live-adjustable theme shared by every screen.
+/// Shape and motion only. The showcase is deliberately black and white so the components carry
+/// the design; colour choices are left to the host app.
 final class ButtonAppearance: ObservableObject {
     enum Shape: String, CaseIterable, Identifiable {
-        case rounded, capsule, rectangle
+        case capsule, rounded, rectangle
         var id: String { rawValue }
         var buttonShape: KitoButtonShape {
             switch self {
@@ -41,17 +42,26 @@ final class ButtonAppearance: ObservableObject {
         }
     }
 
+    enum Mode: String, CaseIterable, Identifiable {
+        case system, light, dark
+        var id: String { rawValue }
+        var colorScheme: ColorScheme? {
+            switch self {
+            case .system: return nil
+            case .light: return .light
+            case .dark: return .dark
+            }
+        }
+    }
+
     @Published var shape: Shape = .capsule
     @Published var motion: Motion = .default
-    @Published var tint: Color = .black
-    @Published var showsShadow = false
+    @Published var mode: Mode = .system
 
     var theme: KitoButtonTheme {
         var theme = KitoButtonTheme()
         theme.shape = shape.buttonShape
-        theme.tint = tint
         theme.motion = motion.preset
-        theme.shadow = showsShadow ? KitoButtonShadow() : nil
         return theme
     }
 }
@@ -61,15 +71,14 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
-            GalleryScreen().tabItem { Label("Gallery", systemImage: "square.grid.2x2") }
+            SamplesScreen().tabItem { Label("Samples", systemImage: "square.grid.2x2") }
             ShopScreen().tabItem { Label("Shop", systemImage: "cart") }
-            CartAnimationsScreen().tabItem { Label("Cart FX", systemImage: "sparkles") }
-            PhasesScreen().tabItem { Label("Phases", systemImage: "arrow.triangle.2.circlepath") }
-            AppearanceScreen().tabItem { Label("Appearance", systemImage: "paintpalette") }
+            AppearanceScreen().tabItem { Label("Appearance", systemImage: "slider.horizontal.3") }
         }
         .environmentObject(appearance)
         .kitoButtonTheme(appearance.theme)
-        .tint(appearance.tint)
+        .tint(.primary)
+        .preferredColorScheme(appearance.mode.colorScheme)
     }
 }
 
@@ -79,24 +88,31 @@ struct AppearanceScreen: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section("Theme") {
+                    Picker("Mode", selection: $appearance.mode) {
+                        ForEach(ButtonAppearance.Mode.allCases) { Text($0.rawValue.capitalized).tag($0) }
+                    }.pickerStyle(.segmented)
+                    Text("Primary buttons are black in light mode and white in dark mode by default.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
                 Section("Shape") {
                     Picker("Shape", selection: $appearance.shape) {
                         ForEach(ButtonAppearance.Shape.allCases) { Text($0.rawValue.capitalized).tag($0) }
                     }.pickerStyle(.segmented)
-                    Toggle("Drop shadow", isOn: $appearance.showsShadow)
                 }
                 Section("Motion preset") {
                     Picker("Motion", selection: $appearance.motion) {
                         ForEach(ButtonAppearance.Motion.allCases) { Text($0.rawValue.capitalized).tag($0) }
                     }.pickerStyle(.segmented)
                 }
-                Section("Tint") {
-                    ColorPicker("Accent color", selection: $appearance.tint, supportsOpacity: false)
-                }
                 Section("Preview") {
-                    KitoButton("Primary") {}.fullWidth()
-                    KitoButton("Tonal") {}.variant(.tonal).fullWidth()
-                    KitoButton("Outlined") {}.variant(.outlined).fullWidth()
+                    VStack(spacing: 12) {
+                        KitoButton("Primary") {}.fullWidth()
+                        KitoButton("Tonal") {}.variant(.tonal).fullWidth()
+                        KitoButton("Outlined") {}.variant(.outlined).fullWidth()
+                        KitoCartButton("Add to cart", animation: .rollingCart) {}.fullWidth()
+                    }
+                    .padding(.vertical, 8)
                 }
             }
             .navigationTitle("Appearance")
