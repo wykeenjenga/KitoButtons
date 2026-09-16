@@ -1,0 +1,7 @@
+"phase.loading" = "Loading";
+"phase.succeeded" = "Succeeded";
+"phase.failed" = "Failed";
+"cart.addToCart" = "Add to cart";
+"cart.added" = "Added";
+"cart.adding" = "Adding";
+"badge.items" = "%@, %d items";

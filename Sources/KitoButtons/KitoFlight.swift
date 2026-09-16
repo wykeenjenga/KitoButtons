@@ -240,7 +240,7 @@ public struct KitoBadgeButton: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(systemImage), \(count) items")
+        .accessibilityLabel(KitoButtonsLocalization.format("badge.items", "%@, %d items", systemImage, count))
     }
 
     public func badgeColor(_ color: Color) -> KitoBadgeButton { var c = self; c.badgeColor = color; return c }

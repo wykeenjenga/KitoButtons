@@ -106,3 +106,18 @@ final class KitoReducedMotionTests: XCTestCase {
         XCTAssertTrue(controller.flights.isEmpty)
     }
 }
+
+final class KitoButtonsLocalizationTests: XCTestCase {
+    func testLanguagesDefineTheSameKeys() {
+        let en = KitoButtonsLocalization.keys(forLanguage: "en")
+        XCTAssertGreaterThan(en.count, 5)
+        for code in ["sw", "fr"] { XCTAssertEqual(KitoButtonsLocalization.keys(forLanguage: code), en, code) }
+    }
+
+    func testProviderOverride() {
+        KitoButtonsLocalization.provider = { key, _ in key == "cart.added" ? "Imeongezwa" : nil }
+        defer { KitoButtonsLocalization.provider = nil }
+        XCTAssertEqual(KitoButtonsLocalization.string("cart.added", "Added"), "Imeongezwa")
+        XCTAssertEqual(KitoButtonsLocalization.string("missing", "Fallback"), "Fallback")
+    }
+}

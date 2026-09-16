@@ -1,0 +1,7 @@
+"phase.loading" = "Inapakia";
+"phase.succeeded" = "Imefaulu";
+"phase.failed" = "Imeshindikana";
+"cart.addToCart" = "Ongeza kwenye kikapu";
+"cart.added" = "Imeongezwa";
+"cart.adding" = "Inaongeza";
+"badge.items" = "%@, bidhaa %d";

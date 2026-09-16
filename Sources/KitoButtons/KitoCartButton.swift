@@ -163,7 +163,7 @@ public struct KitoCartButton: View {
     private let title: String
     private let animation: KitoCartAnimation
     private let action: () async throws -> Void
-    private var addedTitle = "Added"
+    private var addedTitle = KitoButtonsLocalization.string("cart.added", "Added")
     private var variant: KitoButtonVariant = .primary
     private var size: KitoButtonSize = .medium
     private var isFullWidth = false
@@ -182,13 +182,13 @@ public struct KitoCartButton: View {
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    public init(_ title: String = "Add to cart", animation: KitoCartAnimation = .rollingCart, action: @escaping () async throws -> Void) {
+    public init(_ title: String = KitoButtonsLocalization.string("cart.addToCart", "Add to cart"), animation: KitoCartAnimation = .rollingCart, action: @escaping () async throws -> Void) {
         self.title = title
         self.animation = animation
         self.action = action
     }
 
-    public init(_ title: String = "Add to cart", animation: KitoCartAnimation = .rollingCart, action: @escaping () -> Void) {
+    public init(_ title: String = KitoButtonsLocalization.string("cart.addToCart", "Add to cart"), animation: KitoCartAnimation = .rollingCart, action: @escaping () -> Void) {
         self.init(title, animation: animation, action: { @Sendable in action() } as () async throws -> Void)
     }
 
@@ -217,7 +217,7 @@ public struct KitoCartButton: View {
         .opacity(isEnabled ? 1 : theme.disabledOpacity)
         .modifier(KitoButtonShakeEffect(shakes: shakes))
         .accessibilityLabel(title)
-        .accessibilityValue(isPlaying ? "Adding" : "")
+        .accessibilityValue(isPlaying ? KitoButtonsLocalization.string("cart.adding", "Adding") : "")
     }
 
     // MARK: Playback
