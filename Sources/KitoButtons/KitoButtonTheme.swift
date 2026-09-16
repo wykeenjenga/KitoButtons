@@ -139,6 +139,9 @@ public struct KitoButtonTheme: Sendable {
         #endif
     }
 
+    /// Motion to use given the system Reduce Motion setting.
+    public func motion(reducesMotion: Bool) -> KitoButtonMotion { reducesMotion ? .subtle : motion }
+
     public func colors(for variant: KitoButtonVariant) -> KitoButtonColors {
         if let custom = overrides[variant] { return custom }
         switch variant {

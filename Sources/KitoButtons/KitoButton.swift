@@ -23,6 +23,7 @@ public struct KitoButtonStyle: ButtonStyle {
 
     @Environment(\.kitoButtonTheme) private var theme
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     public init(_ variant: KitoButtonVariant = .primary, size: KitoButtonSize = .medium, fullWidth: Bool = false, loading: Bool = false) {
         self.init(variant, size: size, fullWidth: fullWidth, phase: loading ? .loading : .idle)
@@ -72,10 +73,10 @@ public struct KitoButtonStyle: ButtonStyle {
                 }
             }
             .contentShape(KitoButtonOutline(theme.shape))
-            .scaleEffect(pressed && !isLink ? theme.pressedScale : 1)
+            .scaleEffect(pressed && !isLink && !reduceMotion ? theme.pressedScale : 1)
             .opacity(!isEnabled && phase == .idle ? theme.disabledOpacity : (pressed ? theme.pressedOpacity : 1))
-            .animation(theme.motion.press, value: pressed)
-            .animation(theme.motion.morph, value: phase)
+            .animation(theme.motion(reducesMotion: reduceMotion).press, value: pressed)
+            .animation(theme.motion(reducesMotion: reduceMotion).morph, value: phase)
     }
 
     /// Variant colours, recoloured for success/failure phases.
@@ -148,6 +149,8 @@ public struct KitoButton: View {
     @State private var shakes: CGFloat = 0
     @State private var sourceID = UUID()
     @Environment(\.kitoButtonTheme) private var theme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    private var motion: KitoButtonMotion { theme.motion(reducesMotion: reduceMotion) }
 
     private struct FlightRequest {
         let controller: KitoFlightController
@@ -219,7 +222,7 @@ public struct KitoButton: View {
                 if iconPlacement == .trailing { icon }
             }
             .frame(minWidth: title == nil ? size.height - (variant == .link ? 0 : size.horizontalPadding * 2) : nil)
-            .animation(theme.motion.morph, value: phase)
+            .animation(motion.morph, value: phase)
         }
         .buttonStyle(KitoButtonStyle(variant, size: size, fullWidth: isFullWidth, phase: phase))
         .disabled(phase != .idle)
@@ -297,7 +300,7 @@ public struct KitoButton: View {
         guard shows else { setPhase(.idle); return }
         setPhase(success ? .success : .failure)
         if !success {
-            withAnimation(theme.motion.shake) { shakes += 1 }
+            if !reduceMotion { withAnimation(motion.shake) { shakes += 1 } }
             #if os(iOS)
             if hapticsEnabled { UINotificationFeedbackGenerator().notificationOccurred(.error) }
             #endif
@@ -306,13 +309,13 @@ public struct KitoButton: View {
             if hapticsEnabled { UINotificationFeedbackGenerator().notificationOccurred(.success) }
             #endif
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + theme.motion.resultDuration) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + motion.resultDuration) {
             if phase != .loading { setPhase(.idle) }
         }
     }
 
     private func setPhase(_ newPhase: KitoButtonPhase) {
-        withAnimation(theme.motion.morph) {
+        withAnimation(motion.morph) {
             if let phaseBinding { phaseBinding.wrappedValue = newPhase } else { internalPhase = newPhase }
         }
     }

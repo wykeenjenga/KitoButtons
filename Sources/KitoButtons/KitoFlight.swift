@@ -31,6 +31,9 @@ public final class KitoFlightController: ObservableObject {
     var frames: [AnyHashable: CGRect] = [:]
 
     public var motion: KitoButtonMotion
+    /// When true (set automatically by `.kitoFlightLayer` from the Reduce Motion setting) flights
+    /// land immediately without drawing an arc.
+    public var reducesMotion = false
 
     public init(motion: KitoButtonMotion = .default) {
         self.motion = motion
@@ -60,6 +63,11 @@ public final class KitoFlightController: ObservableObject {
     }
 
     private func fly<Content: View>(from start: CGPoint, to end: CGPoint, target: AnyHashable, size: CGSize, arcHeight: CGFloat, completion: (() -> Void)?, content: () -> Content) {
+        if reducesMotion {
+            landedTargets[target, default: 0] += 1
+            completion?()
+            return
+        }
         let flight = Flight(start: start, end: end, size: size, content: AnyView(content()), arcHeight: arcHeight, completion: completion)
         flights.append(flight)
         let id = flight.id
@@ -96,9 +104,12 @@ struct KitoFlightAnchorModifier: ViewModifier {
 
 struct KitoFlightLayerModifier: ViewModifier {
     @ObservedObject var controller: KitoFlightController
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func body(content: Content) -> some View {
         content
+            .onAppear { controller.reducesMotion = reduceMotion }
+            .onChange(of: reduceMotion) { controller.reducesMotion = $0 }
             .coordinateSpace(name: kitoFlightSpace)
             .onPreferenceChange(KitoFlightFramesKey.self) { frames in
                 controller.frames.merge(frames) { $1 }
