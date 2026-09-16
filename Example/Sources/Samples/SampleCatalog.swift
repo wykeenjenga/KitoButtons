@@ -1,0 +1,544 @@
+//
+//  SampleCatalog.swift
+//  KitoButtonsExample
+//
+//  Created by Wycliff Njenga on 16/09/2026.
+//  Copyright © 2026 Wycliff Njenga. All rights reserved.
+//
+
+import SwiftUI
+import KitoButtons
+
+enum SampleCatalog {
+    static let all: [Sample] = commerce + booking + social + media + auth + utility
+
+    // MARK: Commerce
+
+    static let commerce: [Sample] = [
+        Sample("Add to cart · rolling cart", "Label slides away, a cart rolls in, the product drops in, the cart rolls off.", category: .commerce, code: """
+        KitoCartButton("Add to cart", animation: .rollingCart) {
+            try await cart.add(product)
+        }
+        .addedTitle("Added")
+        .fullWidth()
+        """) {
+            KitoCartButton("Add to cart", animation: .rollingCart) { try await work() }.fullWidth()
+        },
+        Sample("Add to cart · drop in", "The product falls into the cart, which squashes and bounces.", category: .commerce, code: """
+        KitoCartButton("Add to cart", animation: .dropIn) {
+            try await cart.add(product)
+        }
+        .fullWidth()
+        """) {
+            KitoCartButton("Add to cart", animation: .dropIn) { try await work() }.fullWidth()
+        },
+        Sample("Add to bag · morph to circle", "Squeezes into a circle with a spinner, a tick draws itself, expands back.", category: .commerce, code: """
+        KitoCartButton("Add to bag", animation: .morphCircle) {
+            try await bag.add(item)
+        }
+        .addedTitle("In your bag")
+        .fullWidth()
+        """) {
+            KitoCartButton("Add to bag", animation: .morphCircle) { try await work() }.addedTitle("In your bag").fullWidth()
+        },
+        Sample("Buy now · fill sweep", "Success colour sweeps across, the tick draws itself.", category: .commerce, code: """
+        KitoCartButton("Buy now · KES 8,900", animation: .fillSweep) {
+            try await checkout.buyNow(product)
+        }
+        .addedTitle("Purchased")
+        .size(.large)
+        .fullWidth()
+        """) {
+            KitoCartButton("Buy now · KES 8,900", animation: .fillSweep) { try await work() }.addedTitle("Purchased").size(.large).fullWidth()
+        },
+        Sample("Add to cart · burst, bounce, flip", "Three more compact styles side by side.", category: .commerce, code: """
+        KitoCartButton("Add", animation: .burst) { … }.size(.small).variant(.tonal)
+        KitoCartButton("Add", animation: .bounceCart) { … }.size(.small)
+        KitoCartButton("Add", animation: .flip) { … }.size(.small).variant(.outlined)
+        """) {
+            HStack(spacing: 12) {
+                KitoCartButton("Add", animation: .burst) {}.size(.small).variant(.tonal)
+                KitoCartButton("Add", animation: .bounceCart) {}.size(.small)
+                KitoCartButton("Add", animation: .flip) {}.size(.small).variant(.outlined)
+            }
+        },
+        Sample("Wishlist heart", "Icon-only button that morphs to a filled heart.", category: .commerce, code: """
+        KitoButton(systemImage: "heart", accessibilityLabel: "Add to wishlist") {
+            try await wishlist.add(product)
+        }
+        .showsResult()
+        .resultIcons(success: "heart.fill")
+        .variant(.tonal)
+        """) {
+            HStack(spacing: 12) {
+                KitoButton(systemImage: "heart", accessibilityLabel: "Add to wishlist") { try await work(0.4) }
+                    .showsResult().resultIcons(success: "heart.fill").variant(.tonal)
+                KitoButton(systemImage: "heart", accessibilityLabel: "Add to wishlist") { try await work(0.4) }
+                    .showsResult().resultIcons(success: "heart.fill").variant(.outlined)
+                KitoButton(systemImage: "heart", accessibilityLabel: "Add to wishlist") { try await work(0.4) }
+                    .showsResult().resultIcons(success: "heart.fill").variant(.ghost)
+            }
+        },
+        Sample("Checkout", "Async primary action: spinner, then a tick and a new title.", category: .commerce, code: """
+        KitoButton("Place order · KES 24,300", systemImage: "lock.fill") {
+            try await checkout.placeOrder()
+        }
+        .showsResult()
+        .successTitle("Order placed")
+        .size(.large)
+        .fullWidth()
+        """) {
+            KitoButton("Place order · KES 24,300", systemImage: "lock.fill") { try await work(1.2) }
+                .showsResult().successTitle("Order placed").size(.large).fullWidth()
+        },
+        Sample("Apply coupon · failure", "A thrown error shakes the button and shows a cross.", category: .commerce, code: """
+        KitoButton("Apply coupon") {
+            try await coupons.apply(code)          // throws for an invalid code
+        }
+        .showsResult()
+        .failureTitle("Invalid code")
+        .variant(.outlined)
+        """) {
+            KitoButton("Apply coupon") { try await work(0.6, fail: true) }
+                .showsResult().failureTitle("Invalid code").variant(.outlined)
+        },
+        Sample("Remove from cart", "Destructive role: red fill, trash icon.", category: .commerce, code: """
+        KitoButton("Remove", systemImage: "trash") {
+            cart.remove(item)
+        }
+        .role(.destructive)
+        .size(.small)
+        """) {
+            KitoButton("Remove", systemImage: "trash") {}.role(.destructive).size(.small)
+        },
+    ]
+
+    // MARK: Booking & travel
+
+    static let booking: [Sample] = [
+        Sample("Book now", "Morph-to-circle with a booking title.", category: .booking, code: """
+        KitoCartButton("Book now", animation: .morphCircle) {
+            try await bookings.reserve(room, nights: 2)
+        }
+        .addedTitle("Booked")
+        .fullWidth()
+        """) {
+            KitoCartButton("Book now", animation: .morphCircle) { try await work() }.addedTitle("Booked").fullWidth()
+        },
+        Sample("Reserve a table", "Flip animation revealing the confirmed state.", category: .booking, code: """
+        KitoCartButton("Reserve a table", animation: .flip) {
+            try await restaurant.reserve(guests: 2, at: date)
+        }
+        .addedTitle("Reserved · 7:30 PM")
+        .fullWidth()
+        """) {
+            KitoCartButton("Reserve a table", animation: .flip) { try await work() }.addedTitle("Reserved · 7:30 PM").fullWidth()
+        },
+        Sample("Check in", "Burst animation for a one-tap check-in.", category: .booking, code: """
+        KitoCartButton("Check in", animation: .burst) {
+            try await flight.checkIn(passenger)
+        }
+        .addedTitle("Checked in")
+        .variant(.tonal)
+        .fullWidth()
+        """) {
+            KitoCartButton("Check in", animation: .burst) { try await work() }.addedTitle("Checked in").variant(.tonal).fullWidth()
+        },
+        Sample("Confirm ride", "Custom success glyph and title after the request succeeds.", category: .booking, code: """
+        KitoButton("Confirm ride", systemImage: "car.fill") {
+            try await rides.request(pickup, dropoff)
+        }
+        .showsResult()
+        .resultIcons(success: "checkmark.circle.fill")
+        .successTitle("Driver on the way")
+        .fullWidth()
+        """) {
+            KitoButton("Confirm ride", systemImage: "car.fill") { try await work(1.0) }
+                .showsResult().resultIcons(success: "checkmark.circle.fill").successTitle("Driver on the way").fullWidth()
+        },
+        Sample("Pay · manual phase", "Drive the phase yourself, e.g. from a payment SDK callback.", category: .booking, code: """
+        @State private var phase: KitoButtonPhase = .idle
+
+        KitoButton("Pay KES 1,200", systemImage: "creditcard") {
+            phase = .loading
+            mpesa.charge(amount) { result in
+                phase = result.isSuccess ? .success : .failure
+            }
+        }
+        .phase($phase)
+        .successTitle("Paid")
+        .failureTitle("Declined")
+        .size(.large)
+        .fullWidth()
+        """) {
+            ManualPhaseSample()
+        },
+        Sample("Select a seat", "Toggle between outlined and filled to show selection.", category: .booking, code: """
+        @State private var selected: Set<String> = []
+
+        ForEach(seats, id: \\.self) { seat in
+            KitoButton(seat) { selected.toggle(seat) }
+                .variant(selected.contains(seat) ? .primary : .outlined)
+                .size(.small)
+        }
+        """) {
+            SeatPickerSample()
+        },
+        Sample("Cancel booking", "Destructive async action with a confirmation title.", category: .booking, code: """
+        KitoButton("Cancel booking") {
+            try await bookings.cancel(id)
+        }
+        .role(.destructive)
+        .showsResult()
+        .successTitle("Cancelled")
+        .fullWidth()
+        """) {
+            KitoButton("Cancel booking") { try await work() }.role(.destructive).showsResult().successTitle("Cancelled").fullWidth()
+        },
+    ]
+
+    // MARK: Social
+
+    static let social: [Sample] = [
+        Sample("Follow", "Tonal button that becomes “Following” with a check glyph.", category: .social, code: """
+        KitoButton("Follow", systemImage: "person.badge.plus") {
+            try await api.follow(user)
+        }
+        .showsResult()
+        .resultIcons(success: "person.fill.checkmark")
+        .successTitle("Following")
+        .variant(.tonal)
+        .size(.small)
+        """) {
+            KitoButton("Follow", systemImage: "person.badge.plus") { try await work(0.5) }
+                .showsResult().resultIcons(success: "person.fill.checkmark").successTitle("Following").variant(.tonal).size(.small)
+        },
+        Sample("Like, bookmark, share", "Icon-only buttons in three variants.", category: .social, code: """
+        KitoButton(systemImage: "heart", accessibilityLabel: "Like") { … }
+            .showsResult().resultIcons(success: "heart.fill").variant(.ghost)
+        KitoButton(systemImage: "bookmark", accessibilityLabel: "Save") { … }
+            .showsResult().resultIcons(success: "bookmark.fill").variant(.outlined)
+        KitoButton(systemImage: "square.and.arrow.up", accessibilityLabel: "Share") { … }
+            .variant(.tonal)
+        """) {
+            HStack(spacing: 12) {
+                KitoButton(systemImage: "heart", accessibilityLabel: "Like") { try await work(0.3) }.showsResult().resultIcons(success: "heart.fill").variant(.ghost)
+                KitoButton(systemImage: "bookmark", accessibilityLabel: "Save") { try await work(0.3) }.showsResult().resultIcons(success: "bookmark.fill").variant(.outlined)
+                KitoButton(systemImage: "square.and.arrow.up", accessibilityLabel: "Share") {}.variant(.tonal)
+            }
+        },
+        Sample("Subscribe", "Bell rings into a filled bell.", category: .social, code: """
+        KitoButton("Subscribe", systemImage: "bell") {
+            try await channel.subscribe()
+        }
+        .showsResult()
+        .resultIcons(success: "bell.fill")
+        .successTitle("Subscribed")
+        """) {
+            KitoButton("Subscribe", systemImage: "bell") { try await work(0.5) }
+                .showsResult().resultIcons(success: "bell.fill").successTitle("Subscribed")
+        },
+        Sample("Send message", "Trailing icon and full width.", category: .social, code: """
+        KitoButton("Send", systemImage: "paperplane.fill", iconPlacement: .trailing) {
+            try await chat.send(draft)
+        }
+        .showsResult()
+        .successTitle("Sent")
+        .fullWidth()
+        """) {
+            KitoButton("Send", systemImage: "paperplane.fill", iconPlacement: .trailing) { try await work(0.5) }
+                .showsResult().successTitle("Sent").fullWidth()
+        },
+    ]
+
+    // MARK: Media & files
+
+    static let media: [Sample] = [
+        Sample("Download", "Outlined action with a downloaded state.", category: .media, code: """
+        KitoButton("Download", systemImage: "arrow.down.circle") {
+            try await downloads.fetch(file)
+        }
+        .showsResult()
+        .resultIcons(success: "checkmark.circle.fill")
+        .successTitle("Downloaded")
+        .variant(.outlined)
+        """) {
+            KitoButton("Download", systemImage: "arrow.down.circle") { try await work(1.4) }
+                .showsResult().resultIcons(success: "checkmark.circle.fill").successTitle("Downloaded").variant(.outlined)
+        },
+        Sample("Upload photo", "Tonal button, long-running upload.", category: .media, code: """
+        KitoButton("Upload photo", systemImage: "photo.on.rectangle") {
+            try await storage.upload(image)
+        }
+        .showsResult()
+        .successTitle("Uploaded")
+        .variant(.tonal)
+        .fullWidth()
+        """) {
+            KitoButton("Upload photo", systemImage: "photo.on.rectangle") { try await work(1.6) }
+                .showsResult().successTitle("Uploaded").variant(.tonal).fullWidth()
+        },
+        Sample("Save changes", "The classic save button with a saved state.", category: .media, code: """
+        KitoButton("Save changes", systemImage: "square.and.arrow.down") {
+            try await document.save()
+        }
+        .showsResult()
+        .successTitle("Saved")
+        .fullWidth()
+        """) {
+            KitoButton("Save changes", systemImage: "square.and.arrow.down") { try await work(0.7) }
+                .showsResult().successTitle("Saved").fullWidth()
+        },
+        Sample("Delete file", "Ghost destructive action for low-emphasis danger.", category: .media, code: """
+        KitoButton("Delete file", systemImage: "trash") {
+            try await files.delete(file)
+        }
+        .role(.destructive)
+        .showsResult()
+        .successTitle("Deleted")
+        """) {
+            KitoButton("Delete file", systemImage: "trash") { try await work(0.6) }.role(.destructive).showsResult().successTitle("Deleted")
+        },
+    ]
+
+    // MARK: Auth & forms
+
+    static let auth: [Sample] = [
+        Sample("Sign in", "Large primary call to action; disable it until the form is valid.", category: .auth, code: """
+        KitoButton("Sign in") {
+            try await auth.signIn(email, password)
+        }
+        .showsResult(success: false)          // navigate away instead of showing a tick
+        .size(.large)
+        .fullWidth()
+        .disabled(!formIsValid)
+        """) {
+            KitoButton("Sign in") { try await work(1.0) }.showsResult(success: false).size(.large).fullWidth()
+        },
+        Sample("Continue with Apple / Google", "Brand buttons using the default black and an outlined variant.", category: .auth, code: """
+        KitoButton("Continue with Apple", systemImage: "apple.logo") { … }
+            .fullWidth()
+        KitoButton("Continue with Google", systemImage: "globe") { … }
+            .variant(.outlined)
+            .fullWidth()
+        """) {
+            VStack(spacing: 12) {
+                KitoButton("Continue with Apple", systemImage: "apple.logo") {}.fullWidth()
+                KitoButton("Continue with Google", systemImage: "globe") {}.variant(.outlined).fullWidth()
+            }
+        },
+        Sample("Resend code with countdown", "Link variant disabled while a timer runs.", category: .auth, code: """
+        @State private var secondsLeft = 0
+
+        KitoButton(secondsLeft > 0 ? "Resend in \\(secondsLeft)s" : "Resend code") {
+            try await otp.resend()
+            secondsLeft = 30           // tick down with a Timer
+        }
+        .variant(.link)
+        .disabled(secondsLeft > 0)
+        """) {
+            ResendCodeSample()
+        },
+        Sample("Create account", "Full-width primary with an outlined secondary beneath.", category: .auth, code: """
+        VStack(spacing: 12) {
+            KitoButton("Create account") { try await auth.register(form) }
+                .showsResult().successTitle("Welcome!").size(.large).fullWidth()
+            KitoButton("I already have an account") { showSignIn = true }
+                .variant(.ghost).fullWidth()
+        }
+        """) {
+            VStack(spacing: 12) {
+                KitoButton("Create account") { try await work(1.0) }.showsResult().successTitle("Welcome!").size(.large).fullWidth()
+                KitoButton("I already have an account") {}.variant(.ghost).fullWidth()
+            }
+        },
+        Sample("Log out", "Outlined destructive action.", category: .auth, code: """
+        KitoButton("Log out", systemImage: "rectangle.portrait.and.arrow.right") {
+            try await auth.signOut()
+        }
+        .role(.destructive)
+        .variant(.outlined)
+        .fullWidth()
+        """) {
+            KitoButton("Log out", systemImage: "rectangle.portrait.and.arrow.right") { try await work(0.5) }
+                .role(.destructive).variant(.outlined).fullWidth()
+        },
+    ]
+
+    // MARK: Utility & theming
+
+    static let utility: [Sample] = [
+        Sample("Copy to clipboard", "Ghost button that confirms with a tick.", category: .utility, code: """
+        KitoButton("Copy link", systemImage: "doc.on.doc") {
+            UIPasteboard.general.string = url.absoluteString
+        }
+        .showsResult()
+        .successTitle("Copied")
+        .variant(.ghost)
+        """) {
+            KitoButton("Copy link", systemImage: "doc.on.doc") { UIPasteboard.general.string = "https://github.com/wykeenjenga/KitoButtons" }
+                .showsResult().successTitle("Copied").variant(.ghost)
+        },
+        Sample("Retry with failure", "Toggle to see the shake and cross, then retry.", category: .utility, code: """
+        KitoButton("Sync now", systemImage: "arrow.triangle.2.circlepath") {
+            try await sync.run()
+        }
+        .showsResult()
+        .successTitle("Up to date")
+        .failureTitle("Try again")
+        .variant(.tonal)
+        """) {
+            RetrySample()
+        },
+        Sample("Variants", "Primary, tonal, outlined, ghost, destructive, link.", category: .utility, code: """
+        KitoButton("Primary") {}
+        KitoButton("Tonal") {}.variant(.tonal)
+        KitoButton("Outlined") {}.variant(.outlined)
+        KitoButton("Ghost") {}.variant(.ghost)
+        KitoButton("Destructive") {}.variant(.destructive)
+        KitoButton("Link") {}.variant(.link)
+        """) {
+            VStack(spacing: 10) {
+                KitoButton("Primary") {}.fullWidth()
+                KitoButton("Tonal") {}.variant(.tonal).fullWidth()
+                KitoButton("Outlined") {}.variant(.outlined).fullWidth()
+                KitoButton("Ghost") {}.variant(.ghost).fullWidth()
+                KitoButton("Destructive") {}.variant(.destructive).fullWidth()
+                KitoButton("Link") {}.variant(.link)
+            }
+        },
+        Sample("Sizes", "Small, medium and large.", category: .utility, code: """
+        KitoButton("Small") {}.size(.small)
+        KitoButton("Medium") {}.size(.medium)
+        KitoButton("Large") {}.size(.large)
+        """) {
+            HStack(spacing: 12) {
+                KitoButton("Small") {}.size(.small)
+                KitoButton("Medium") {}.size(.medium)
+                KitoButton("Large") {}.size(.large)
+            }
+        },
+        Sample("Loading & disabled", "Controlled spinner and the disabled look.", category: .utility, code: """
+        KitoButton("Loading") {}.loading(true)
+        KitoButton("Disabled") {}.disabled(true)
+        """) {
+            VStack(spacing: 12) {
+                KitoButton("Loading") {}.loading(true).fullWidth()
+                KitoButton("Disabled") {}.fullWidth().disabled(true)
+            }
+        },
+        Sample("Native Button + Kito style", "Keep your existing Button, borrow the look.", category: .utility, code: """
+        Button("Save") { save() }
+            .buttonStyle(.kito(.outlined, size: .medium, fullWidth: true))
+        """) {
+            Button("Save") {}.buttonStyle(.kito(.outlined, size: .medium, fullWidth: true))
+        },
+        Sample("Fly to a target", "Any view can be a target; the product arcs from the button.", category: .utility, code: """
+        @StateObject var flights = KitoFlightController()
+
+        KitoBadgeButton(systemImage: "cart", count: count) { }
+            .bounces(on: flights.landings(on: "cart"))
+            .kitoFlightAnchor("cart")
+
+        KitoCartButton("Add", animation: .dropIn) { }
+            .onAdded { count += 1 }
+            .flies(to: "cart", with: flights) { Image(systemName: "shippingbox.fill") }
+
+        // Wrap the screen: .kitoFlightLayer(flights)
+        """) {
+            FlightSample()
+        },
+        Sample("Per-button theme", "Override shape or colours for one button.", category: .utility, code: """
+        KitoButton("Sharp corners") {}
+            .kitoButtonTheme { $0.shape = .rectangle }
+        KitoButton("Inverted") {}
+            .kitoButtonTheme { $0.overrides[.primary] = KitoButtonColors(background: .white, foreground: .black, border: .black) }
+        """) {
+            VStack(spacing: 12) {
+                KitoButton("Sharp corners") {}.fullWidth().kitoButtonTheme { $0.shape = .rectangle }
+                KitoButton("Inverted") {}.fullWidth().kitoButtonTheme { $0.overrides[.primary] = KitoButtonColors(background: Color(.systemBackground), foreground: .primary, border: .primary) }
+            }
+        },
+    ]
+}
+
+// MARK: - Stateful samples
+
+private struct ManualPhaseSample: View {
+    @State private var phase: KitoButtonPhase = .idle
+    var body: some View {
+        VStack(spacing: 14) {
+            KitoButton("Pay KES 1,200", systemImage: "creditcard") {}
+                .phase($phase).successTitle("Paid").failureTitle("Declined").size(.large).fullWidth()
+            Picker("Phase", selection: $phase) {
+                Text("Idle").tag(KitoButtonPhase.idle)
+                Text("Loading").tag(KitoButtonPhase.loading)
+                Text("Success").tag(KitoButtonPhase.success)
+                Text("Failure").tag(KitoButtonPhase.failure)
+            }
+            .pickerStyle(.segmented)
+        }
+    }
+}
+
+private struct SeatPickerSample: View {
+    @State private var selected: Set<String> = ["3B"]
+    private let seats = ["3A", "3B", "3C", "3D"]
+    var body: some View {
+        HStack(spacing: 10) {
+            ForEach(seats, id: \.self) { seat in
+                KitoButton(seat) {
+                    if selected.contains(seat) { selected.remove(seat) } else { selected.insert(seat) }
+                }
+                .variant(selected.contains(seat) ? .primary : .outlined)
+                .size(.small)
+            }
+        }
+    }
+}
+
+private struct ResendCodeSample: View {
+    @State private var secondsLeft = 0
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    var body: some View {
+        KitoButton(secondsLeft > 0 ? "Resend in \(secondsLeft)s" : "Resend code") {
+            try await work(0.4)
+            secondsLeft = 10
+        }
+        .variant(.link)
+        .disabled(secondsLeft > 0)
+        .onReceive(timer) { _ in if secondsLeft > 0 { secondsLeft -= 1 } }
+    }
+}
+
+private struct RetrySample: View {
+    @State private var shouldFail = true
+    var body: some View {
+        VStack(spacing: 14) {
+            KitoButton("Sync now", systemImage: "arrow.triangle.2.circlepath") { try await work(0.8, fail: shouldFail) }
+                .showsResult().successTitle("Up to date").failureTitle("Try again").variant(.tonal).fullWidth()
+            Toggle("Simulate failure", isOn: $shouldFail).font(.subheadline)
+        }
+    }
+}
+
+private struct FlightSample: View {
+    @StateObject private var flights = KitoFlightController()
+    @State private var count = 0
+    var body: some View {
+        VStack(spacing: 28) {
+            HStack {
+                Spacer()
+                KitoBadgeButton(systemImage: "cart", count: count) { count = 0 }
+                    .bounces(on: flights.landings(on: "cart"))
+                    .kitoFlightAnchor("cart")
+            }
+            KitoCartButton("Add", animation: .dropIn) {}
+                .onAdded { count += 1 }
+                .flies(to: "cart", with: flights, size: CGSize(width: 36, height: 36), arcHeight: 60) {
+                    Image(systemName: "shippingbox.fill").font(.title).foregroundStyle(.primary)
+                }
+        }
+        .kitoFlightLayer(flights)
+    }
+}
