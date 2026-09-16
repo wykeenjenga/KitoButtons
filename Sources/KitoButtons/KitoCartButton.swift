@@ -177,7 +177,6 @@ public struct KitoCartButton: View {
     @State private var isPlaying = false
     @State private var contentOpacity: Double = 1
     @State private var shakes: CGFloat = 0
-    @State private var measuredWidth: CGFloat = 0
     @State private var sourceID = UUID()
     @Environment(\.kitoButtonTheme) private var theme
     @Environment(\.isEnabled) private var isEnabled
@@ -204,15 +203,12 @@ public struct KitoCartButton: View {
                 successColor: theme.successColor,
                 shape: theme.shape,
                 borderWidth: theme.borderWidth,
-                fullWidth: isFullWidth ? measuredWidth : nil
+                fullWidth: isFullWidth
             )
             .opacity(contentOpacity)
-            .frame(maxWidth: isFullWidth ? .infinity : nil)
             .background(GeometryReader { proxy in
                 Color.clear
                     .preference(key: KitoFlightFramesKey.self, value: flight == nil ? [:] : [AnyHashable("kitocart.\(sourceID.uuidString)"): proxy.frame(in: .named("KitoFlightSpace"))])
-                    .onAppear { measuredWidth = proxy.size.width }
-                    .onChange(of: proxy.size.width) { measuredWidth = $0 }
             })
         }
         .buttonStyle(KitoPressStyle(scale: theme.pressedScale, animation: theme.motion.press))
@@ -321,7 +317,7 @@ struct KitoCartChoreography: View, Animatable {
     let successColor: Color
     let shape: KitoButtonShape
     let borderWidth: CGFloat
-    let fullWidth: CGFloat?
+    let fullWidth: Bool
 
     var animatableData: Double {
         get { progress }
@@ -385,12 +381,30 @@ struct KitoCartChoreography: View, Animatable {
             .overlay(RoundedRectangle(cornerRadius: 3).stroke(colors.background.opacity(0.6), lineWidth: 1))
     }
 
-    private var container: some View {
-        chrome()
-            .frame(width: fullWidth, height: height)
+    /// Gives width-dependent choreographies an intrinsic size: the wider of the idle and added
+    /// labels (or the full available width), then hands the measured width to `content`.
+    private func sized<Content: View>(@ViewBuilder _ content: @escaping (CGFloat) -> Content) -> some View {
+        ZStack {
+            HStack(spacing: 8) { symbol("cart.badge.plus"); label(title) }
+            HStack(spacing: 8) { check(1); label(addedTitle) }
+        }
+        .padding(.horizontal, size.horizontalPadding + 4)
+        .frame(maxWidth: fullWidth ? .infinity : nil)
+        .frame(height: height)
+        .opacity(0)
+        .accessibilityHidden(true)
+        .overlay(GeometryReader { proxy in
+            content(proxy.size.width).frame(width: proxy.size.width, height: height)
+        })
     }
 
-    private func frameWidth() -> CGFloat? { fullWidth }
+    private struct IntrinsicFrame: ViewModifier {
+        let fullWidth: Bool
+        let height: CGFloat
+        func body(content: Content) -> some View {
+            content.frame(maxWidth: fullWidth ? .infinity : nil).frame(height: height)
+        }
+    }
 
     // MARK: 1. Rolling cart
 
@@ -401,8 +415,7 @@ struct KitoCartChoreography: View, Animatable {
         let drop = KitoEase.outBounce(KitoEase.segment(p, 0.34, 0.55))
         let added = KitoEase.outBack(KitoEase.segment(p, 0.82, 1.0))
         let wheelSpin = p * 720
-        return GeometryReader { proxy in
-            let w = proxy.size.width
+        return sized { w in
             let cartX = KitoEase.lerp(-w / 2 - 30, 0, cartIn) + KitoEase.lerp(0, w / 2 + 40, cartOut)
             ZStack {
                 chrome()
@@ -436,10 +449,7 @@ struct KitoCartChoreography: View, Animatable {
                 .scaleEffect(0.9 + 0.1 * added)
             }
             .clipShape(KitoButtonOutline(shape))
-            .frame(width: w, height: height)
         }
-        .frame(width: fullWidth, height: height)
-        .frame(minWidth: fullWidth == nil ? 168 : nil)
     }
 
     // MARK: 2. Drop in
@@ -477,7 +487,7 @@ struct KitoCartChoreography: View, Animatable {
             }
             .padding(.horizontal, size.horizontalPadding)
         }
-        .frame(width: fullWidth, height: height)
+        .modifier(IntrinsicFrame(fullWidth: fullWidth, height: height))
         .clipShape(KitoButtonOutline(shape))
     }
 
@@ -491,8 +501,7 @@ struct KitoCartChoreography: View, Animatable {
         let burstT = KitoEase.segment(p, 0.6, 0.9)
         let accent = p > 0.6 ? successColor : colors.background
         let fillMix = KitoEase.segment(p, 0.6, 0.7)
-        return GeometryReader { proxy in
-            let full = proxy.size.width
+        return sized { full in
             let width = KitoEase.lerp(full, height, collapse) + KitoEase.lerp(0, full - height, expand)
             let radius: CGFloat = {
                 if case .roundedRectangle(let r) = shape { return KitoEase.lerp(r, height / 2, collapse) - KitoEase.lerp(0, height / 2 - r, expand) }
@@ -526,10 +535,7 @@ struct KitoCartChoreography: View, Animatable {
                     .offset(x: icon * 0.9)
                     .opacity(expand)
             }
-            .frame(width: full, height: height)
         }
-        .frame(width: fullWidth, height: height)
-        .frame(minWidth: fullWidth == nil ? 168 : nil)
     }
 
     // MARK: 4. Burst
@@ -560,7 +566,7 @@ struct KitoCartChoreography: View, Animatable {
             }
             .padding(.horizontal, size.horizontalPadding)
         }
-        .frame(width: fullWidth, height: height)
+        .modifier(IntrinsicFrame(fullWidth: fullWidth, height: height))
     }
 
     // MARK: 5. Flip
@@ -589,7 +595,7 @@ struct KitoCartChoreography: View, Animatable {
             .rotation3DEffect(.degrees(180), axis: (x: 1, y: 0, z: 0))
             .opacity(showingBack ? 1 : 0)
         }
-        .frame(width: fullWidth, height: height)
+        .modifier(IntrinsicFrame(fullWidth: fullWidth, height: height))
         .rotation3DEffect(.degrees(angle), axis: (x: 1, y: 0, z: 0), perspective: 0.6)
     }
 
@@ -600,8 +606,7 @@ struct KitoCartChoreography: View, Animatable {
         let checkDraw = KitoEase.segment(p, 0.5, 0.72)
         let swap = KitoEase.inOutCubic(KitoEase.segment(p, 0.45, 0.7))
         let fg = accentForeground(successColor)
-        return GeometryReader { proxy in
-            let w = proxy.size.width
+        return sized { w in
             ZStack {
                 chrome()
                 variantAccent(successColor)
@@ -621,10 +626,7 @@ struct KitoCartChoreography: View, Animatable {
                     }
                 }
             }
-            .frame(width: w, height: height)
         }
-        .frame(width: fullWidth, height: height)
-        .frame(minWidth: fullWidth == nil ? 168 : nil)
     }
 
     // MARK: 7. Bounce cart
@@ -664,7 +666,7 @@ struct KitoCartChoreography: View, Animatable {
             }
             .padding(.horizontal, size.horizontalPadding)
         }
-        .frame(width: fullWidth, height: height)
+        .modifier(IntrinsicFrame(fullWidth: fullWidth, height: height))
     }
 
     // MARK: Colour helpers
