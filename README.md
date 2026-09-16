@@ -66,11 +66,14 @@ KitoButton(systemImage: "heart", accessibilityLabel: "Like") {}   // icon-only, 
 
 ## Theme
 
+Defaults: capsule shape, black primary fill (white in dark mode) with system-background text.
+Presets: `KitoButtonTheme.default`, `.black` (always black), `.accent` (uses your accent color).
+
 ```swift
 .kitoButtonTheme { theme in
     theme.tint = .indigo
     theme.onTint = .white
-    theme.shape = .capsule                      // .rectangle / .roundedRectangle(cornerRadius:) / .capsule
+    theme.shape = .rounded                      // .rectangle / .roundedRectangle(cornerRadius:) / .capsule (default)
     theme.borderWidth = 1.5
     theme.shadow = KitoButtonShadow()
     theme.pressedScale = 0.97

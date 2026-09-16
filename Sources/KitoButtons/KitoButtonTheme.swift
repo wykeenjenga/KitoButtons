@@ -74,14 +74,16 @@ public struct KitoButtonColors: Sendable {
 
 /// Tokens for `KitoButton`. Apply with `.kitoButtonTheme(...)`.
 public struct KitoButtonTheme: Sendable {
-    /// Brand color used by primary/tonal/outlined/ghost/link.
-    public var tint: Color = .accentColor
-    public var onTint: Color = .white
+    /// Brand color used by primary/tonal/outlined/ghost/link. Defaults to black in light mode and
+    /// white in dark mode so a primary button always contrasts with the background.
+    public var tint: Color = KitoButtonTheme.defaultTint
+    /// Text/icon color on the primary fill. Defaults to the system background color.
+    public var onTint: Color = KitoButtonTheme.defaultOnTint
     public var destructive: Color = .red
     public var onDestructive: Color = .white
     /// Fill for `.tonal`; nil derives from `tint`.
     public var tonalBackground: Color? = nil
-    public var shape: KitoButtonShape = .rounded
+    public var shape: KitoButtonShape = .capsule
     public var borderWidth: CGFloat = 1.5
     public var pressedScale: CGFloat = 0.98
     public var pressedOpacity: Double = 0.9
@@ -100,6 +102,42 @@ public struct KitoButtonTheme: Sendable {
 
     public init() {}
     public static let `default` = KitoButtonTheme()
+
+    /// Pure black fill regardless of appearance (use when your screens are always light).
+    public static var black: KitoButtonTheme {
+        var t = KitoButtonTheme()
+        t.tint = .black
+        t.onTint = .white
+        return t
+    }
+
+    /// Uses the app accent color instead of black.
+    public static var accent: KitoButtonTheme {
+        var t = KitoButtonTheme()
+        t.tint = .accentColor
+        t.onTint = .white
+        return t
+    }
+
+    public static var defaultTint: Color {
+        #if os(iOS)
+        return Color(UIColor.label)
+        #elseif os(macOS)
+        return Color(NSColor.labelColor)
+        #else
+        return .primary
+        #endif
+    }
+
+    public static var defaultOnTint: Color {
+        #if os(iOS)
+        return Color(UIColor.systemBackground)
+        #elseif os(macOS)
+        return Color(NSColor.windowBackgroundColor)
+        #else
+        return .white
+        #endif
+    }
 
     public func colors(for variant: KitoButtonVariant) -> KitoButtonColors {
         if let custom = overrides[variant] { return custom }

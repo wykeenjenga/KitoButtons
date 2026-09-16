@@ -41,9 +41,9 @@ final class ButtonAppearance: ObservableObject {
         }
     }
 
-    @Published var shape: Shape = .rounded
+    @Published var shape: Shape = .capsule
     @Published var motion: Motion = .default
-    @Published var tint: Color = .indigo
+    @Published var tint: Color = .black
     @Published var showsShadow = false
 
     var theme: KitoButtonTheme {
