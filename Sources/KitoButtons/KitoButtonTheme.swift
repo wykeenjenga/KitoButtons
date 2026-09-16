@@ -120,7 +120,7 @@ public struct KitoButtonTheme: Sendable {
     }
 
     public static var defaultTint: Color {
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         return Color(UIColor.label)
         #elseif os(macOS)
         return Color(NSColor.labelColor)
@@ -130,7 +130,7 @@ public struct KitoButtonTheme: Sendable {
     }
 
     public static var defaultOnTint: Color {
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         return Color(UIColor.systemBackground)
         #elseif os(macOS)
         return Color(NSColor.windowBackgroundColor)
