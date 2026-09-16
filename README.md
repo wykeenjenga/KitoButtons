@@ -1,26 +1,69 @@
 # KitoButtons
 
-A comprehensive, themeable SwiftUI button: six variants, three sizes, icons, loading state, full width, async actions, per-button theme overrides, and a native `ButtonStyle` you can drop onto any existing `Button`.
+A comprehensive, themeable SwiftUI button toolkit: six variants, three sizes, icons, loading / success / failure phases with icon morphing, seven choreographed add-to-cart animations, fly-to-cart flights, async actions, per-button theme overrides, and a native `ButtonStyle` you can drop onto any existing `Button`.
 
 - iOS 15+ / macOS 12+, pure SwiftUI, no dependencies
 - Author: **Wycliff Njenga**
 - Licence: MIT
 
+<p align="center">
+  <img src="Assets/shop.gif" width="260" alt="Products flying into the cart with the badge bouncing" />
+  <img src="Assets/cart-animations.gif" width="260" alt="Seven add-to-cart button choreographies" />
+</p>
+
+<p align="center">
+  <img src="Assets/gallery.png" width="200" alt="Variants and sizes" />
+  <img src="Assets/shop.png" width="200" alt="Shop screen with add-to-cart buttons" />
+  <img src="Assets/cart-animations.png" width="200" alt="Cart animation samples" />
+  <img src="Assets/phases.png" width="200" alt="Loading, success and failure phases" />
+</p>
+
 ## Installation
 
-**Swift Package Manager** (Xcode: File ▸ Add Package Dependencies…):
+### Swift Package Manager (recommended)
+
+**In Xcode**
+
+1. File ▸ Add Package Dependencies…
+2. Paste `https://github.com/wykeenjenga/KitoButtons.git`
+3. Dependency rule: *Up to Next Major Version* from `1.3.0`
+4. Add the `KitoButtons` product to your app target
+
+**In `Package.swift`**
 
 ```swift
-.package(url: "https://github.com/wykeenjenga/KitoButtons.git", from: "1.2.0")
+dependencies: [
+    .package(url: "https://github.com/wykeenjenga/KitoButtons.git", from: "1.3.0")
+],
+targets: [
+    .target(name: "MyApp", dependencies: ["KitoButtons"])
+]
 ```
 
-**CocoaPods**:
+### CocoaPods
 
 ```ruby
-pod 'KitoButtons', '~> 1.2'
+pod 'KitoButtons', '~> 1.3'
 ```
 
-Then `import KitoButtons`.
+Then `pod install` and open the `.xcworkspace`.
+
+### Import
+
+```swift
+import KitoButtons
+```
+
+### Requirements
+
+| | Minimum |
+| --- | --- |
+| iOS | 15.0 |
+| macOS | 12.0 |
+| Swift | 5.9 |
+| Xcode | 15 |
+
+The one-line default look is a black capsule (white in dark mode). Change it once at the root of your app with `.kitoButtonTheme(...)`.
 
 ## Quick start
 
