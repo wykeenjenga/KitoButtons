@@ -21,4 +21,5 @@ Pod::Spec.new do |s|
   s.swift_versions   = ['5.9']
   s.frameworks       = 'SwiftUI'
   s.source_files     = 'Sources/KitoButtons/**/*.swift'
+  s.resource_bundles = { 'KitoButtons' => ['Sources/KitoButtons/Resources/**/*.lproj'] }
 end

@@ -17,7 +17,8 @@ let package = Package(
     targets: [
         .target(
             name: "KitoButtons",
-            path: "Sources/KitoButtons"
+            path: "Sources/KitoButtons",
+            resources: [.process("Resources")]
         ),
         .testTarget(
             name: "KitoButtonsTests",

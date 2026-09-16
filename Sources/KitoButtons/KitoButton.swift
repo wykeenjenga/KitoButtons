@@ -236,9 +236,9 @@ public struct KitoButton: View {
     private var accessibilityValue: String {
         switch phase {
         case .idle: return ""
-        case .loading: return "Loading"
-        case .success: return "Succeeded"
-        case .failure: return "Failed"
+        case .loading: return KitoButtonsLocalization.string("phase.loading", "Loading")
+        case .success: return KitoButtonsLocalization.string("phase.succeeded", "Succeeded")
+        case .failure: return KitoButtonsLocalization.string("phase.failed", "Failed")
         }
     }
 
