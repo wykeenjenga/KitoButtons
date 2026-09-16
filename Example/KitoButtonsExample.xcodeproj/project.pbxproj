@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D6489002EEBF9CACAC62E6F /* CartAnimationsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5BBADC2C2D22DA3857E8C1F /* CartAnimationsScreen.swift */; };
 		623F70E54889E7C0C2727A4A /* KitoButtons in Frameworks */ = {isa = PBXBuildFile; productRef = 65B1BAE1CF874BCA11802731 /* KitoButtons */; };
 		863924E8416FBAA4AEE4A48D /* ShopScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 813B922B839E1154D07955A8 /* ShopScreen.swift */; };
 		BB2A4F1644AB7FBAD7F67A8F /* GalleryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4DB1B4190E8BF62C144C69 /* GalleryScreen.swift */; };
@@ -22,6 +23,7 @@
 		813B922B839E1154D07955A8 /* ShopScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopScreen.swift; sourceTree = "<group>"; };
 		83CC7637518AE043E7A5C834 /* KitoButtons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = KitoButtons; path = ..; sourceTree = SOURCE_ROOT; };
 		CD236ADADCDF7953AF58C434 /* KitoButtonsExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitoButtonsExampleApp.swift; sourceTree = "<group>"; };
+		E5BBADC2C2D22DA3857E8C1F /* CartAnimationsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartAnimationsScreen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,6 +41,7 @@
 		388F3A82925666C30C38AC7D /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				E5BBADC2C2D22DA3857E8C1F /* CartAnimationsScreen.swift */,
 				6C4DB1B4190E8BF62C144C69 /* GalleryScreen.swift */,
 				26D6365EBBC3144172912AB1 /* Info.plist */,
 				CD236ADADCDF7953AF58C434 /* KitoButtonsExampleApp.swift */,
@@ -133,6 +136,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D6489002EEBF9CACAC62E6F /* CartAnimationsScreen.swift in Sources */,
 				BB2A4F1644AB7FBAD7F67A8F /* GalleryScreen.swift in Sources */,
 				D18F88D42EBC1632490D6258 /* KitoButtonsExampleApp.swift in Sources */,
 				BD52FC0E382BCAFFC953B6CA /* PhasesScreen.swift in Sources */,

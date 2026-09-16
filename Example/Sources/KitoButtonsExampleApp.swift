@@ -63,6 +63,7 @@ struct ContentView: View {
         TabView {
             GalleryScreen().tabItem { Label("Gallery", systemImage: "square.grid.2x2") }
             ShopScreen().tabItem { Label("Shop", systemImage: "cart") }
+            CartAnimationsScreen().tabItem { Label("Cart FX", systemImage: "sparkles") }
             PhasesScreen().tabItem { Label("Phases", systemImage: "arrow.triangle.2.circlepath") }
             AppearanceScreen().tabItem { Label("Appearance", systemImage: "paintpalette") }
         }

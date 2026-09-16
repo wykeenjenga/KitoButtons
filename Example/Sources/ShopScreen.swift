@@ -15,6 +15,7 @@ struct Product: Identifiable {
     let price: Int
     let symbol: String
     let color: Color
+    let animation: KitoCartAnimation
 }
 
 /// Add-to-cart: the product image arcs into the cart icon, the badge bounces, the button morphs to a tick.
@@ -25,12 +26,12 @@ struct ShopScreen: View {
     @EnvironmentObject private var appearance: ButtonAppearance
 
     private let products = [
-        Product(name: "Trail runners", price: 8_900, symbol: "shoe.2.fill", color: .orange),
-        Product(name: "Rain jacket", price: 12_500, symbol: "cloud.rain.fill", color: .blue),
-        Product(name: "Camp stove", price: 4_300, symbol: "flame.fill", color: .red),
-        Product(name: "Headlamp", price: 2_100, symbol: "lightbulb.fill", color: .yellow),
-        Product(name: "Water bottle", price: 1_600, symbol: "drop.fill", color: .teal),
-        Product(name: "Trekking poles", price: 6_800, symbol: "figure.hiking", color: .green),
+        Product(name: "Trail runners", price: 8_900, symbol: "shoe.2.fill", color: .orange, animation: .rollingCart),
+        Product(name: "Rain jacket", price: 12_500, symbol: "cloud.rain.fill", color: .blue, animation: .dropIn),
+        Product(name: "Camp stove", price: 4_300, symbol: "flame.fill", color: .red, animation: .morphCircle),
+        Product(name: "Headlamp", price: 2_100, symbol: "lightbulb.fill", color: .yellow, animation: .burst),
+        Product(name: "Water bottle", price: 1_600, symbol: "drop.fill", color: .teal, animation: .flip),
+        Product(name: "Trekking poles", price: 6_800, symbol: "figure.hiking", color: .green, animation: .fillSweep),
     ]
 
     var body: some View {
@@ -77,6 +78,7 @@ private struct ProductRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(product.name).font(.headline)
                 Text("KES \(product.price.formatted())").font(.subheadline).foregroundColor(.secondary)
+                Text(product.animation.title).font(.caption2).foregroundColor(.secondary.opacity(0.7))
             }
             Spacer()
             KitoButton(systemImage: "heart", accessibilityLabel: "Favourite") {
@@ -90,13 +92,12 @@ private struct ProductRow: View {
             .flies(to: "favourites", with: flights, size: CGSize(width: 24, height: 24), arcHeight: 80) {
                 Image(systemName: "heart.fill").font(.title2).foregroundColor(.pink)
             }
-            KitoButton("Add", systemImage: "cart.badge.plus") {
-                try? await Task.sleep(nanoseconds: 500_000_000)
-                onAdd()
+            KitoCartButton("Add", animation: product.animation) {
+                try? await Task.sleep(nanoseconds: 300_000_000)
             }
-            .showsResult()
-            .successTitle("Added")
+            .addedTitle("Added")
             .size(.small)
+            .onAdded(onAdd)
             .flies(to: "cart", with: flights, size: CGSize(width: 56, height: 56), arcHeight: 140) {
                 thumbnail
             }

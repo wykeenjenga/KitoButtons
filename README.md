@@ -8,8 +8,16 @@ A comprehensive, themeable SwiftUI button: six variants, three sizes, icons, loa
 
 ## Installation
 
+**Swift Package Manager** (Xcode: File ▸ Add Package Dependencies…):
+
 ```swift
-.package(url: "https://github.com/wykeenjenga/KitoButtons.git", from: "1.0.0")
+.package(url: "https://github.com/wykeenjenga/KitoButtons.git", from: "1.2.0")
+```
+
+**CocoaPods**:
+
+```ruby
+pod 'KitoButtons', '~> 1.2'
 ```
 
 Then `import KitoButtons`.
@@ -87,6 +95,35 @@ KitoButton("Add to cart", systemImage: "cart.badge.plus") {
 
 KitoButton("Pay") {}.phase($phase)                // or drive the phase yourself
 ```
+
+## Add-to-cart animations
+
+`KitoCartButton` plays a choreographed, Lottie-style timeline natively. Pick one of seven built-in
+styles; each is time-based, so it plays identically however long your network call takes.
+
+| Style | What happens |
+| --- | --- |
+| `.rollingCart` | Label slides away, a cart rolls in, the product drops into it, the cart rolls off, "Added ✓" appears |
+| `.dropIn` | The product falls into the cart icon, the cart squashes and bounces, a dot badge pops |
+| `.morphCircle` | Button squeezes into a circle with a spinner, a tick draws with a particle burst, the button expands back |
+| `.burst` | Plus spins into a tick while particles fly outward |
+| `.flip` | The button flips over in 3D to reveal the added state |
+| `.fillSweep` | Success colour sweeps across, the tick draws itself |
+| `.bounceCart` | Cart jumps, a plus falls in, the cart wiggles, a "1" badge pops |
+
+```swift
+KitoCartButton("Add to cart", animation: .rollingCart) {
+    try await cart.add(product)          // throwing = shake and reset
+}
+.addedTitle("Added")
+.variant(.primary).size(.medium).fullWidth()
+.duration(1.6).hold(1.0)                 // timeline length and how long "Added" stays
+.onAdded { cart.count += 1 }             // fires at the landing moment
+.flies(to: "cart", with: flights) { Image(product.image) }
+```
+
+Building blocks are public if you want your own choreography: `KitoCheckmarkShape` (trim to draw),
+`KitoBurst` (particles), `KitoArcEffect` (arc motion), `KitoEase` (segment/easing helpers).
 
 ## Fly to cart
 
