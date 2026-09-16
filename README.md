@@ -26,14 +26,14 @@ A comprehensive, themeable SwiftUI button toolkit: six variants, three sizes, ic
 
 1. File ▸ Add Package Dependencies…
 2. Paste `https://github.com/wykeenjenga/KitoButtons.git`
-3. Dependency rule: *Up to Next Major Version* from `1.3.0`
+3. Dependency rule: *Up to Next Major Version* from `1.4.0`
 4. Add the `KitoButtons` product to your app target
 
 **In `Package.swift`**
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/wykeenjenga/KitoButtons.git", from: "1.3.0")
+    .package(url: "https://github.com/wykeenjenga/KitoButtons.git", from: "1.4.0")
 ],
 targets: [
     .target(name: "MyApp", dependencies: ["KitoButtons"])
@@ -43,7 +43,7 @@ targets: [
 ### CocoaPods
 
 ```ruby
-pod 'KitoButtons', '~> 1.3'
+pod 'KitoButtons', '~> 1.4'
 ```
 
 Then `pod install` and open the `.xcworkspace`.
