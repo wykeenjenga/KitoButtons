@@ -204,6 +204,8 @@ All timings live in `KitoButtonTheme.motion` (`KitoButtonMotion`), exposed as co
 
 Helpers: `.kitoButtonBounce(trigger:)` pops a view when a value changes (badges), `.kitoButtonShake(trigger:)` shakes it.
 
+When the system **Reduce Motion** setting is on, everything degrades gracefully: `KitoButtonMotion.subtle` timings, no press scale, no shake or bounce, cart buttons crossfade to their added state instead of playing the choreography, and flights land instantly.
+
 ## Use on a plain SwiftUI Button
 
 ```swift
