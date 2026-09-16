@@ -527,13 +527,17 @@ struct KitoCartChoreography: View, Animatable {
                     .opacity(spinnerOn ? 1 : 0)
 
                 KitoBurst(progress: burstT, color: successColor, radius: height * 0.9)
+                // Centred tick while the button is a circle…
                 check(checkDraw, color: colors.foreground, lineWidth: 3, side: icon * 1.2)
                     .scaleEffect(1 + 0.15 * KitoEase.pulse(KitoEase.segment(p, 0.75, 0.9)))
-                    .offset(x: -KitoEase.lerp(0, 14, expand) * (addedTitle.isEmpty ? 0 : 1))
-                    .opacity(p > 0.62 ? 1 : 0)
-                label(addedTitle)
-                    .offset(x: icon * 0.9)
-                    .opacity(expand)
+                    .opacity(p > 0.62 ? 1 - expand : 0)
+                // …then a normal "✓ Added" row once it has expanded again.
+                HStack(spacing: 8) {
+                    check(1, color: colors.foreground, lineWidth: 3)
+                    label(addedTitle)
+                }
+                .opacity(expand)
+                .scaleEffect(0.9 + 0.1 * expand)
             }
         }
     }
