@@ -209,6 +209,15 @@ Helpers: `.kitoButtonBounce(trigger:)` pops a view when a value changes (badges)
 
 When the system **Reduce Motion** setting is on, everything degrades gracefully: `KitoButtonMotion.subtle` timings, no press scale, no shake or bounce, cart buttons crossfade to their added state instead of playing the choreography, and flights land instantly.
 
+## Localization
+
+The strings KitoButtons produces itself (default "Add to cart" / "Added" titles, loading and result
+accessibility values, badge counts) ship in English, Swahili and French. Override or add languages:
+
+```swift
+KitoButtonsLocalization.provider = { key, english in NSLocalizedString("kito.\(key)", value: english, comment: "") }
+```
+
 ## Use on a plain SwiftUI Button
 
 ```swift
