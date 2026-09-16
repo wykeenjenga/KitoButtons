@@ -10,6 +10,7 @@ import SwiftUI
 
 struct SamplesScreen: View {
     @State private var query = ""
+    @State private var showsAbout = false
 
     private var filtered: [Sample] {
         let q = query.trimmingCharacters(in: .whitespaces)
@@ -45,8 +46,20 @@ struct SamplesScreen: View {
                 }
             }
             .listStyle(.plain)
-            .searchable(text: $query, prompt: "Search samples")
+            .searchable(text: $query, prompt: "Search \(SampleCatalog.all.count) samples")
             .navigationTitle("KitoButtons")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { showsAbout = true } label: { Image(systemName: "info.circle") }
+                        .accessibilityLabel("About")
+                }
+            }
+            .sheet(isPresented: $showsAbout) { AboutScreen() }
+            .overlay {
+                if filtered.isEmpty {
+                    ContentUnavailableCompat(query: query)
+                }
+            }
             .navigationDestination(for: UUID.self) { id in
                 if let sample = SampleCatalog.all.first(where: { $0.id == id }) {
                     SampleDetailScreen(sample: sample)
@@ -104,7 +117,7 @@ struct SampleDetailScreen: View {
                 }
                 .background(RoundedRectangle(cornerRadius: 12).fill(Color.primary.opacity(0.05)))
 
-                Text("Requires `import KitoButtons`. Colours follow your theme; this showcase uses the default black-and-white theme.")
+                Text("Requires `import KitoButtons`. Shape, colours and motion follow the theme you set in the Appearance tab; the default is a black capsule.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -112,5 +125,68 @@ struct SampleDetailScreen: View {
         }
         .navigationTitle(sample.title)
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+
+/// Empty search state (ContentUnavailableView needs iOS 17).
+private struct ContentUnavailableCompat: View {
+    let query: String
+    var body: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "magnifyingglass").font(.largeTitle).foregroundStyle(.secondary)
+            Text("No samples for “\(query)”").font(.headline)
+            Text("Try a use case (“booking”), a component (“badge”) or an animation (“flip”).")
+                .font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.center)
+        }
+        .padding(32)
+    }
+}
+
+struct AboutScreen: View {
+    @Environment(\.dismiss) private var dismiss
+    private var version: String {
+        let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let b = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
+        return "\(v) (\(b))"
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    HStack(spacing: 16) {
+                        Image("AppIconPreview")
+                            .resizable()
+                            .frame(width: 64, height: 64)
+                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("KitoButtons").font(.title3.weight(.semibold))
+                            Text("Sample app · \(version)").font(.footnote).foregroundStyle(.secondary)
+                            Text("\(SampleCatalog.all.count) samples across \(SampleCategory.allCases.count) categories").font(.footnote).foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 6)
+                }
+                Section("Package") {
+                    Link(destination: URL(string: "https://github.com/wykeenjenga/KitoButtons")!) { Label("Source on GitHub", systemImage: "chevron.left.forwardslash.chevron.right") }
+                    Link(destination: URL(string: "https://swiftpackageindex.com/wykeenjenga/KitoButtons")!) { Label("Swift Package Index", systemImage: "shippingbox") }
+                    Link(destination: URL(string: "https://cocoapods.org/pods/KitoButtons")!) { Label("CocoaPods", systemImage: "cube") }
+                    Link(destination: URL(string: "https://github.com/wykeenjenga/KitoFields")!) { Label("KitoFields · matching form inputs", systemImage: "character.cursor.ibeam") }
+                }
+                Section("Community") {
+                    Link(destination: URL(string: "https://github.com/wykeenjenga/KitoButtons/issues/new/choose")!) { Label("Report a bug or request a feature", systemImage: "exclamationmark.bubble") }
+                    Link(destination: URL(string: "https://github.com/wykeenjenga/KitoButtons/blob/main/CONTRIBUTING.md")!) { Label("Contributing guide", systemImage: "person.2") }
+                    Link(destination: URL(string: "https://www.buymeacoffee.com/wycliffnjea")!) { Label("Buy me a coffee", systemImage: "cup.and.saucer") }
+                }
+                Section {
+                    Text("Made by Wycliff Njenga in Nairobi. MIT licensed.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+            }
+            .navigationTitle("About")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+        }
     }
 }

@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0997CA111016FF01032D74BC /* SampleCatalog+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6870DE13BFFC79278EA2861 /* SampleCatalog+Generated.swift */; };
 		105535055AD2DE7451F1F71D /* Sample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B1722F80FAB09A7F92BC4F /* Sample.swift */; };
+		32D78726CCB10DE055026DE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 35A6892D46E25B89553C5A83 /* Assets.xcassets */; };
 		49D05FFD0FC16AEAF439161B /* SamplesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4BCDF174580CA34C620EF6 /* SamplesScreen.swift */; };
 		623F70E54889E7C0C2727A4A /* KitoButtons in Frameworks */ = {isa = PBXBuildFile; productRef = 65B1BAE1CF874BCA11802731 /* KitoButtons */; };
 		863924E8416FBAA4AEE4A48D /* ShopScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 813B922B839E1154D07955A8 /* ShopScreen.swift */; };
@@ -19,11 +21,13 @@
 		03CCA08C2C9C4CEF214959D7 /* wt-buttons-gallery */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "wt-buttons-gallery"; path = ..; sourceTree = SOURCE_ROOT; };
 		0D4BCDF174580CA34C620EF6 /* SamplesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SamplesScreen.swift; sourceTree = "<group>"; };
 		26D6365EBBC3144172912AB1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		35A6892D46E25B89553C5A83 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		47B1722F80FAB09A7F92BC4F /* Sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sample.swift; sourceTree = "<group>"; };
 		6BF0B9F482982A5405CECACD /* KitoButtonsExample.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = KitoButtonsExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		813B922B839E1154D07955A8 /* ShopScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopScreen.swift; sourceTree = "<group>"; };
 		A0634DBA70F72C353B3B827F /* SampleCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleCatalog.swift; sourceTree = "<group>"; };
 		CD236ADADCDF7953AF58C434 /* KitoButtonsExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitoButtonsExampleApp.swift; sourceTree = "<group>"; };
+		F6870DE13BFFC79278EA2861 /* SampleCatalog+Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SampleCatalog+Generated.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +45,7 @@
 		388F3A82925666C30C38AC7D /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				35A6892D46E25B89553C5A83 /* Assets.xcassets */,
 				26D6365EBBC3144172912AB1 /* Info.plist */,
 				CD236ADADCDF7953AF58C434 /* KitoButtonsExampleApp.swift */,
 				813B922B839E1154D07955A8 /* ShopScreen.swift */,
@@ -79,6 +84,7 @@
 			children = (
 				47B1722F80FAB09A7F92BC4F /* Sample.swift */,
 				A0634DBA70F72C353B3B827F /* SampleCatalog.swift */,
+				F6870DE13BFFC79278EA2861 /* SampleCatalog+Generated.swift */,
 				0D4BCDF174580CA34C620EF6 /* SamplesScreen.swift */,
 			);
 			path = Samples;
@@ -92,6 +98,7 @@
 			buildConfigurationList = DFECC1219D4CB44ED323B4F2 /* Build configuration list for PBXNativeTarget "KitoButtonsExample" */;
 			buildPhases = (
 				1FA47BF9BC6169007C402799 /* Sources */,
+				297050D95E52E40656CE8569 /* Resources */,
 				6DA1AD1AC860E8F55E24C484 /* Frameworks */,
 			);
 			buildRules = (
@@ -139,6 +146,17 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		297050D95E52E40656CE8569 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32D78726CCB10DE055026DE6 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		1FA47BF9BC6169007C402799 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -146,6 +164,7 @@
 			files = (
 				D18F88D42EBC1632490D6258 /* KitoButtonsExampleApp.swift in Sources */,
 				105535055AD2DE7451F1F71D /* Sample.swift in Sources */,
+				0997CA111016FF01032D74BC /* SampleCatalog+Generated.swift in Sources */,
 				9EBBD261635A1EA8FA7FD9C7 /* SampleCatalog.swift in Sources */,
 				49D05FFD0FC16AEAF439161B /* SamplesScreen.swift in Sources */,
 				863924E8416FBAA4AEE4A48D /* ShopScreen.swift in Sources */,
@@ -278,6 +297,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Sources/Info.plist;
@@ -296,6 +316,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Sources/Info.plist;

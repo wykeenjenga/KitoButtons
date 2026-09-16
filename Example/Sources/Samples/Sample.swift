@@ -10,10 +10,17 @@ import SwiftUI
 
 enum SampleCategory: String, CaseIterable, Identifiable {
     case commerce = "Commerce"
+    case cartAnimations = "Cart animations · every style"
+    case food = "Food & delivery"
+    case finance = "Finance & payments"
     case booking = "Booking & travel"
+    case health = "Health & fitness"
+    case education = "Education"
+    case productivity = "Productivity"
     case social = "Social"
     case media = "Media & files"
     case auth = "Auth & forms"
+    case settings = "Settings & system"
     case utility = "Utility & theming"
 
     var id: String { rawValue }
@@ -21,10 +28,17 @@ enum SampleCategory: String, CaseIterable, Identifiable {
     var symbol: String {
         switch self {
         case .commerce: return "cart"
+        case .cartAnimations: return "sparkles"
+        case .food: return "fork.knife"
+        case .finance: return "creditcard"
         case .booking: return "calendar"
+        case .health: return "heart.text.square"
+        case .education: return "graduationcap"
+        case .productivity: return "checklist"
         case .social: return "person.2"
         case .media: return "arrow.down.circle"
         case .auth: return "person.badge.key"
+        case .settings: return "gearshape"
         case .utility: return "wrench.and.screwdriver"
         }
     }
