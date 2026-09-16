@@ -10,11 +10,11 @@ import SwiftUI
 import KitoButtons
 
 enum SampleCatalog {
-    static let all: [Sample] = commerce + booking + social + media + auth + utility
+    static let all: [Sample] = commerce + cartAnimations + food + finance + booking + health + education + productivity + social + media + auth + settings + utility
 
     // MARK: Commerce
 
-    static let commerce: [Sample] = [
+    static let commerce: [Sample] = commerceExtras + [
         Sample("Add to cart · rolling cart", "Label slides away, a cart rolls in, the product drops in, the cart rolls off.", category: .commerce, code: """
         KitoCartButton("Add to cart", animation: .rollingCart) {
             try await cart.add(product)
@@ -115,7 +115,7 @@ enum SampleCatalog {
 
     // MARK: Booking & travel
 
-    static let booking: [Sample] = [
+    static let booking: [Sample] = bookingExtras + [
         Sample("Book now", "Morph-to-circle with a booking title.", category: .booking, code: """
         KitoCartButton("Book now", animation: .morphCircle) {
             try await bookings.reserve(room, nights: 2)
@@ -199,7 +199,7 @@ enum SampleCatalog {
 
     // MARK: Social
 
-    static let social: [Sample] = [
+    static let social: [Sample] = socialExtras + [
         Sample("Follow", "Tonal button that becomes “Following” with a check glyph.", category: .social, code: """
         KitoButton("Follow", systemImage: "person.badge.plus") {
             try await api.follow(user)
@@ -253,7 +253,7 @@ enum SampleCatalog {
 
     // MARK: Media & files
 
-    static let media: [Sample] = [
+    static let media: [Sample] = mediaExtras + [
         Sample("Download", "Outlined action with a downloaded state.", category: .media, code: """
         KitoButton("Download", systemImage: "arrow.down.circle") {
             try await downloads.fetch(file)
@@ -303,7 +303,7 @@ enum SampleCatalog {
 
     // MARK: Auth & forms
 
-    static let auth: [Sample] = [
+    static let auth: [Sample] = authExtras + [
         Sample("Sign in", "Large primary call to action; disable it until the form is valid.", category: .auth, code: """
         KitoButton("Sign in") {
             try await auth.signIn(email, password)
@@ -541,4 +541,54 @@ private struct FlightSample: View {
         }
         .kitoFlightLayer(flights)
     }
+}
+
+
+// MARK: - Extra table-driven rows for the hand-written categories
+
+extension SampleCatalog {
+    static let commerceExtras: [Sample] = [
+        Action(title: "Add to wishlist", subtitle: "Outlined save-for-later.", icon: "heart", successIcon: "heart.fill", successTitle: "Saved", variant: .outlined),
+        Action(title: "Notify me", subtitle: "Back-in-stock alert.", icon: "bell", successIcon: "bell.fill", successTitle: "We'll notify you", variant: .tonal),
+        Action(title: "Compare", subtitle: "Ghost action in a product grid.", icon: "rectangle.on.rectangle", successIcon: "checkmark", successTitle: "Added to compare", variant: .ghost, fullWidth: false),
+        Action(title: "Redeem points", subtitle: "Loyalty redemption.", icon: "gift", successIcon: "checkmark.seal.fill", successTitle: "Redeemed", variant: .tonal),
+        Action(title: "Start return", subtitle: "Outlined post-purchase action.", icon: "arrow.uturn.backward", successIcon: "checkmark", successTitle: "Return started", variant: .outlined),
+        Action(title: "Track package", subtitle: "Small tonal in an order row.", icon: "shippingbox", successIcon: "location.fill", successTitle: "Tracking", variant: .tonal, size: .small, fullWidth: false),
+    ].map { sample($0, category: .commerce) }
+
+    static let bookingExtras: [Sample] = [
+        Action(title: "Book flight", subtitle: "Large primary purchase.", icon: "airplane", successIcon: "checkmark.seal.fill", successTitle: "Booked · NBO → LHR", size: .large, duration: 1.4),
+        Action(title: "Add to itinerary", subtitle: "Tonal planner action.", icon: "map", successIcon: "checkmark", successTitle: "Added", variant: .tonal),
+        Action(title: "Request refund", subtitle: "Outlined support action.", icon: "arrow.uturn.left", successIcon: "checkmark", successTitle: "Requested", variant: .outlined),
+        Action(title: "Upgrade seat", subtitle: "Upsell with confirmation.", icon: "arrow.up.circle", successIcon: "star.fill", successTitle: "Upgraded", variant: .tonal),
+        Action(title: "Download boarding pass", subtitle: "Wallet pass download.", icon: "wallet.pass", successIcon: "checkmark", successTitle: "Added to Wallet"),
+        Action(title: "Order room service", subtitle: "Hotel in-room action.", icon: "fork.knife", successIcon: "checkmark", successTitle: "Ordered", variant: .outlined),
+    ].map { sample($0, category: .booking) }
+
+    static let socialExtras: [Sample] = [
+        Action(title: "Comment", subtitle: "Ghost reply action.", icon: "bubble.right", successIcon: "checkmark", successTitle: "Posted", variant: .ghost, fullWidth: false),
+        Action(title: "Repost", subtitle: "Tonal share to your feed.", icon: "arrow.2.squarepath", successIcon: "checkmark", successTitle: "Reposted", variant: .tonal, size: .small, fullWidth: false),
+        Action(title: "Invite friends", subtitle: "Growth action.", icon: "person.2.badge.plus", successIcon: "checkmark", successTitle: "Invites sent"),
+        Action(title: "Report", subtitle: "Outlined moderation action.", icon: "flag", successIcon: "checkmark", successTitle: "Reported", variant: .outlined, fullWidth: false),
+        Action(title: "Block user", subtitle: "Destructive moderation action.", icon: "hand.raised", successIcon: "checkmark", successTitle: "Blocked", destructive: true),
+        Action(title: "Join group", subtitle: "Tonal membership action.", icon: "person.3", successIcon: "checkmark", successTitle: "Joined", variant: .tonal),
+    ].map { sample($0, category: .social) }
+
+    static let mediaExtras: [Sample] = [
+        Action(title: "Add to playlist", subtitle: "Tonal library action.", icon: "text.badge.plus", successIcon: "checkmark", successTitle: "Added", variant: .tonal, fullWidth: false),
+        Action(title: "Download episode", subtitle: "Offline download.", icon: "arrow.down.circle", successIcon: "checkmark.circle.fill", successTitle: "Downloaded", variant: .outlined, duration: 1.4),
+        Action(title: "Subscribe to podcast", subtitle: "Primary follow.", icon: "dot.radiowaves.left.and.right", successIcon: "checkmark", successTitle: "Subscribed"),
+        Action(title: "Rent movie", subtitle: "Purchase with price.", icon: "film", successIcon: "play.fill", successTitle: "Ready to play", size: .large),
+        Action(title: "Cast to TV", subtitle: "Ghost device action.", icon: "tv", successIcon: "tv.fill", successTitle: "Casting", variant: .ghost, fullWidth: false),
+        Action(title: "Export video", subtitle: "Long export.", icon: "square.and.arrow.up", successIcon: "checkmark", successTitle: "Exported", duration: 1.8),
+    ].map { sample($0, category: .media) }
+
+    static let authExtras: [Sample] = [
+        Action(title: "Send magic link", subtitle: "Passwordless sign-in.", icon: "envelope", successIcon: "envelope.open.fill", successTitle: "Check your inbox"),
+        Action(title: "Verify email", subtitle: "Tonal verification.", icon: "checkmark.seal", successIcon: "checkmark.seal.fill", successTitle: "Verified", variant: .tonal),
+        Action(title: "Enable Face ID", subtitle: "Biometric opt-in.", icon: "faceid", successIcon: "checkmark", successTitle: "Enabled", variant: .outlined),
+        Action(title: "Change password", subtitle: "Account security.", icon: "key", successIcon: "checkmark", successTitle: "Password updated"),
+        Action(title: "Add phone number", subtitle: "Two-factor setup.", icon: "phone.badge.plus", successIcon: "checkmark", successTitle: "Added", variant: .tonal),
+        Action(title: "Accept invitation", subtitle: "Team invite acceptance.", icon: "envelope.badge", successIcon: "checkmark", successTitle: "Joined team"),
+    ].map { sample($0, category: .auth) }
 }
