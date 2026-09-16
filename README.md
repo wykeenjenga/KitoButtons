@@ -72,6 +72,55 @@ KitoButton(systemImage: "heart", accessibilityLabel: "Like") {}   // icon-only, 
 
 Set it once at the root of your app and override per screen or per button.
 
+## Phases: loading → tick / shake
+
+Async actions drive a `KitoButtonPhase` automatically. Opt into result feedback and the icon morphs
+from its idle glyph to a checkmark (or shakes with a cross when the action throws), then returns to idle.
+
+```swift
+KitoButton("Add to cart", systemImage: "cart.badge.plus") {
+    try await cart.add(product)
+}
+.showsResult()                                    // success and failure feedback
+.successTitle("Added")                            // optional title swap
+.resultIcons(success: "cart.fill.badge.plus")     // optional glyphs
+
+KitoButton("Pay") {}.phase($phase)                // or drive the phase yourself
+```
+
+## Fly to cart
+
+```swift
+@StateObject var flights = KitoFlightController()
+
+NavigationStack { list }
+    .kitoFlightLayer(flights)                     // hosts the in-flight items
+    .toolbar {
+        KitoBadgeButton(systemImage: "cart", count: cart.count) { showCart = true }
+            .bounces(on: flights.landings(on: "cart"))
+            .kitoFlightAnchor("cart")             // the target
+    }
+
+KitoButton("Add", systemImage: "cart.badge.plus") { try await cart.add(product) }
+    .showsResult()
+    .flies(to: "cart", with: flights) { Image(product.image) }   // arcs from the button to the cart
+```
+
+Any view can be a source or target with `.kitoFlightAnchor(id)`, and you can launch a flight from
+code with `flights.fly(from: "product-1", to: "cart") { ... }`. `KitoArcEffect` is public if you
+want the arc motion elsewhere.
+
+## Motion presets
+
+All timings live in `KitoButtonTheme.motion` (`KitoButtonMotion`), exposed as computed presets:
+
+```swift
+.kitoButtonTheme { $0.motion = .lively }          // .default / .lively / .subtle
+.kitoButtonTheme { $0.motion.resultDuration = 2 } // or tune one curve
+```
+
+Helpers: `.kitoButtonBounce(trigger:)` pops a view when a value changes (badges), `.kitoButtonShake(trigger:)` shakes it.
+
 ## Use on a plain SwiftUI Button
 
 ```swift
@@ -79,6 +128,6 @@ Button("Save") { save() }
     .buttonStyle(.kito(.outlined, size: .medium, fullWidth: true))
 ```
 
-## Sample app
+## Example app
 
-`Examples/KitShowcase` in the parent repository shows every variant, size and state side by side with a live theme switcher.
+`Example/KitoButtonsExample.xcodeproj` (in this repository) has four tabs: a gallery of every variant, size and state; a **Shop** with add-to-cart flights, a bouncing cart badge and heart-to-favourites flights; **Phases** showing automatic and manual loading/success/failure; and a live appearance and motion switcher. Regenerate the project with `xcodegen generate` after editing `Example/project.yml`.

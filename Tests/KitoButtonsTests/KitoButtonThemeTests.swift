@@ -42,3 +42,46 @@ final class KitoButtonThemeTests: XCTestCase {
         XCTAssertEqual(outline.inset(by: 2).insetAmount, 2)
     }
 }
+
+final class KitoMotionTests: XCTestCase {
+    func testArcEffectEndpoints() {
+        let start = CGPoint(x: 10, y: 300), end = CGPoint(x: 350, y: 40)
+        let size = CGSize(width: 40, height: 40)
+        let atStart = KitoArcEffect(progress: 0, start: start, end: end).effectValue(size: size)
+        XCTAssertEqual(atStart.m31, 0, accuracy: 0.001)
+        XCTAssertEqual(atStart.m32, 0, accuracy: 0.001)
+        XCTAssertEqual(atStart.m11, 1, accuracy: 0.001)
+        let scale: CGFloat = 0.25
+        let atEnd = KitoArcEffect(progress: 1, start: start, end: end, endScale: scale).effectValue(size: size)
+        XCTAssertEqual(atEnd.m11, scale, accuracy: 0.001)
+        // Scaling about the centre adds (size/2)(1 - scale) to the translation.
+        XCTAssertEqual(atEnd.m31, end.x - start.x + size.width / 2 * (1 - scale), accuracy: 0.001)
+        XCTAssertEqual(atEnd.m32, end.y - start.y + size.height / 2 * (1 - scale), accuracy: 0.001)
+        let mid = KitoArcEffect(progress: 0.5, start: start, end: end, arcHeight: 100).effectValue(size: size)
+        let linearMidY = (start.y + end.y) / 2
+        XCTAssertLessThan(mid.m32 + start.y, linearMidY, "arc should bow upward relative to a straight line")
+    }
+
+    func testShakeEffectReturnsToRest() {
+        let rest = KitoButtonShakeEffect(shakes: 1).effectValue(size: .zero).m31
+        XCTAssertEqual(rest, 0, accuracy: 0.0001)
+        XCTAssertNotEqual(KitoButtonShakeEffect(shakes: 0.125).effectValue(size: .zero).m31, 0)
+    }
+
+    func testMotionPresetsDiffer() {
+        XCTAssertLessThan(KitoButtonMotion.subtle.flightDuration, KitoButtonMotion.default.flightDuration)
+        XCTAssertEqual(KitoButtonPhase.loading.isBusy, true)
+        XCTAssertEqual(KitoButtonPhase.success.isBusy, false)
+    }
+
+    @MainActor func testFlightControllerNeedsAnchors() {
+        let controller = KitoFlightController(motion: .subtle)
+        XCTAssertFalse(controller.fly(from: "a", to: "b") { Color.red })
+        controller.frames["a"] = CGRect(x: 0, y: 0, width: 10, height: 10)
+        controller.frames["b"] = CGRect(x: 100, y: 100, width: 10, height: 10)
+        XCTAssertTrue(controller.fly(from: "a", to: "b") { Color.red })
+        XCTAssertEqual(controller.flights.count, 1)
+        XCTAssertEqual(controller.flights.first?.end, CGPoint(x: 105, y: 105))
+        XCTAssertEqual(controller.landings(on: "b"), 0)
+    }
+}

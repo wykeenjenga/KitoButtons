@@ -89,6 +89,12 @@ public struct KitoButtonTheme: Sendable {
     public var shadow: KitoButtonShadow? = nil
     public var animation: Animation? = .easeOut(duration: 0.12)
     public var iconSpacing: CGFloat = 8
+    /// Fill/foreground used while a button shows its success phase.
+    public var successColor: Color = .green
+    /// Fill/foreground used while a button shows its failure phase.
+    public var failureColor: Color = .red
+    /// All animation timings. Swap for `.lively` or `.subtle`, or tune individual curves.
+    public var motion: KitoButtonMotion = .default
     /// Overrides for any variant.
     public var overrides: [KitoButtonVariant: KitoButtonColors] = [:]
 

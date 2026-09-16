@@ -1,0 +1,23 @@
+name: KitoButtonsExample
+options:
+  bundleIdPrefix: co.triply
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+packages:
+  KitoButtons:
+    path: ..
+targets:
+  KitoButtonsExample:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+    dependencies:
+      - package: KitoButtons
+    settings:
+      base:
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Sources/Info.plist
