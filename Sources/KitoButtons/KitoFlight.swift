@@ -31,6 +31,9 @@ public final class KitoFlightController: ObservableObject {
     var frames: [AnyHashable: CGRect] = [:]
 
     public var motion: KitoButtonMotion
+    /// When true (set automatically by `.kitoFlightLayer` from the Reduce Motion setting) flights
+    /// land immediately without drawing an arc.
+    public var reducesMotion = false
 
     public init(motion: KitoButtonMotion = .default) {
         self.motion = motion
@@ -60,6 +63,11 @@ public final class KitoFlightController: ObservableObject {
     }
 
     private func fly<Content: View>(from start: CGPoint, to end: CGPoint, target: AnyHashable, size: CGSize, arcHeight: CGFloat, completion: (() -> Void)?, content: () -> Content) {
+        if reducesMotion {
+            landedTargets[target, default: 0] += 1
+            completion?()
+            return
+        }
         let flight = Flight(start: start, end: end, size: size, content: AnyView(content()), arcHeight: arcHeight, completion: completion)
         flights.append(flight)
         let id = flight.id
@@ -96,9 +104,12 @@ struct KitoFlightAnchorModifier: ViewModifier {
 
 struct KitoFlightLayerModifier: ViewModifier {
     @ObservedObject var controller: KitoFlightController
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func body(content: Content) -> some View {
         content
+            .onAppear { controller.reducesMotion = reduceMotion }
+            .onChange(of: reduceMotion) { controller.reducesMotion = $0 }
             .coordinateSpace(name: kitoFlightSpace)
             .onPreferenceChange(KitoFlightFramesKey.self) { frames in
                 controller.frames.merge(frames) { $1 }
@@ -204,11 +215,15 @@ public struct KitoBadgeButton: View {
 
     public var body: some View {
         Button(action: action) {
+            // The badge lives inside the view's own bounds so toolbars and clipping containers
+            // never cut it off.
             ZStack(alignment: .topTrailing) {
                 Image(systemName: count > 0 ? systemImage + ".fill" : systemImage)
                     .font(.system(size: iconSize, weight: .medium))
                     .foregroundColor(iconColor ?? theme.tint)
-                    .frame(width: iconSize + 16, height: iconSize + 16)
+                    .frame(width: iconSize + 12, height: iconSize + 12)
+                    .padding(.top, 8)
+                    .padding(.trailing, 10)
                 if count > 0 {
                     Text(count > 99 ? "99+" : "\(count)")
                         .font(.caption2.weight(.bold))
@@ -216,7 +231,6 @@ public struct KitoBadgeButton: View {
                         .padding(.horizontal, 5)
                         .padding(.vertical, 2)
                         .background(Capsule().fill(badgeColor))
-                        .offset(x: 4, y: -2)
                         .transition(.scale.combined(with: .opacity))
                 }
             }
@@ -226,7 +240,7 @@ public struct KitoBadgeButton: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(systemImage), \(count) items")
+        .accessibilityLabel(KitoButtonsLocalization.format("badge.items", "%@, %d items", systemImage, count))
     }
 
     public func badgeColor(_ color: Color) -> KitoBadgeButton { var c = self; c.badgeColor = color; return c }

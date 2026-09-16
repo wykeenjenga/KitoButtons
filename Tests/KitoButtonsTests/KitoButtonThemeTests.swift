@@ -85,3 +85,39 @@ final class KitoMotionTests: XCTestCase {
         XCTAssertEqual(controller.landings(on: "b"), 0)
     }
 }
+
+final class KitoReducedMotionTests: XCTestCase {
+    func testThemeMotionSwitch() {
+        var theme = KitoButtonTheme()
+        theme.motion = .lively
+        XCTAssertEqual(theme.motion(reducesMotion: false).flightDuration, KitoButtonMotion.lively.flightDuration)
+        XCTAssertEqual(theme.motion(reducesMotion: true).flightDuration, KitoButtonMotion.subtle.flightDuration)
+    }
+
+    @MainActor func testFlightsLandImmediatelyWhenReduced() {
+        let controller = KitoFlightController()
+        controller.frames["a"] = CGRect(x: 0, y: 0, width: 10, height: 10)
+        controller.frames["b"] = CGRect(x: 100, y: 100, width: 10, height: 10)
+        controller.reducesMotion = true
+        var completed = false
+        XCTAssertTrue(controller.fly(from: "a", to: "b", completion: { completed = true }) { Color.red })
+        XCTAssertTrue(completed)
+        XCTAssertEqual(controller.landings(on: "b"), 1)
+        XCTAssertTrue(controller.flights.isEmpty)
+    }
+}
+
+final class KitoButtonsLocalizationTests: XCTestCase {
+    func testLanguagesDefineTheSameKeys() {
+        let en = KitoButtonsLocalization.keys(forLanguage: "en")
+        XCTAssertGreaterThan(en.count, 5)
+        for code in ["sw", "fr"] { XCTAssertEqual(KitoButtonsLocalization.keys(forLanguage: code), en, code) }
+    }
+
+    func testProviderOverride() {
+        KitoButtonsLocalization.provider = { key, _ in key == "cart.added" ? "Imeongezwa" : nil }
+        defer { KitoButtonsLocalization.provider = nil }
+        XCTAssertEqual(KitoButtonsLocalization.string("cart.added", "Added"), "Imeongezwa")
+        XCTAssertEqual(KitoButtonsLocalization.string("missing", "Fallback"), "Fallback")
+    }
+}

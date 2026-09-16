@@ -2,7 +2,7 @@
 
 A comprehensive, themeable SwiftUI button toolkit: six variants, three sizes, icons, loading / success / failure phases with icon morphing, seven choreographed add-to-cart animations, fly-to-cart flights, async actions, per-button theme overrides, and a native `ButtonStyle` you can drop onto any existing `Button`.
 
-- iOS 15+ / macOS 12+, pure SwiftUI, no dependencies
+- iOS 15+, macOS 12+, tvOS 15+, watchOS 8+, visionOS 1+; pure SwiftUI, no dependencies
 - Author: **Wycliff Njenga**
 - Licence: MIT
 
@@ -26,14 +26,14 @@ A comprehensive, themeable SwiftUI button toolkit: six variants, three sizes, ic
 
 1. File ▸ Add Package Dependencies…
 2. Paste `https://github.com/wykeenjenga/KitoButtons.git`
-3. Dependency rule: *Up to Next Major Version* from `1.3.0`
+3. Dependency rule: *Up to Next Major Version* from `1.4.0`
 4. Add the `KitoButtons` product to your app target
 
 **In `Package.swift`**
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/wykeenjenga/KitoButtons.git", from: "1.3.0")
+    .package(url: "https://github.com/wykeenjenga/KitoButtons.git", from: "1.4.0")
 ],
 targets: [
     .target(name: "MyApp", dependencies: ["KitoButtons"])
@@ -43,7 +43,7 @@ targets: [
 ### CocoaPods
 
 ```ruby
-pod 'KitoButtons', '~> 1.3'
+pod 'KitoButtons', '~> 1.4'
 ```
 
 Then `pod install` and open the `.xcworkspace`.
@@ -60,6 +60,9 @@ import KitoButtons
 | --- | --- |
 | iOS | 15.0 |
 | macOS | 12.0 |
+| tvOS | 15.0 |
+| watchOS | 8.0 |
+| visionOS | 1.0 |
 | Swift | 5.9 |
 | Xcode | 15 |
 
@@ -204,6 +207,17 @@ All timings live in `KitoButtonTheme.motion` (`KitoButtonMotion`), exposed as co
 
 Helpers: `.kitoButtonBounce(trigger:)` pops a view when a value changes (badges), `.kitoButtonShake(trigger:)` shakes it.
 
+When the system **Reduce Motion** setting is on, everything degrades gracefully: `KitoButtonMotion.subtle` timings, no press scale, no shake or bounce, cart buttons crossfade to their added state instead of playing the choreography, and flights land instantly.
+
+## Localization
+
+The strings KitoButtons produces itself (default "Add to cart" / "Added" titles, loading and result
+accessibility values, badge counts) ship in English, Swahili and French. Override or add languages:
+
+```swift
+KitoButtonsLocalization.provider = { key, english in NSLocalizedString("kito.\(key)", value: english, comment: "") }
+```
+
 ## Use on a plain SwiftUI Button
 
 ```swift
@@ -214,3 +228,24 @@ Button("Save") { save() }
 ## Example app
 
 `Example/KitoButtonsExample.xcodeproj` (in this repository) has four tabs: a gallery of every variant, size and state; a **Shop** with add-to-cart flights, a bouncing cart badge and heart-to-favourites flights; **Phases** showing automatic and manual loading/success/failure; and a live appearance and motion switcher. Regenerate the project with `xcodegen generate` after editing `Example/project.yml`.
+
+## Contributing
+
+KitoButtons is open source and open to contributions. The short version:
+
+1. **Open an issue** describing the bug or the feature you would like.
+2. **Fork and branch** from `main`, make the change with tests and a screenshot or GIF for UI work.
+3. **Open a pull request** referencing the issue. CI runs the tests, the iOS example build and the podspec lint.
+4. Once **approved**, a maintainer merges it and it ships in the next release.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details, and the issue templates for what to include.
+
+## Support the project
+
+If KitoButtons saved you time, you can buy me a coffee. It keeps the packages maintained and the example apps growing.
+
+<a href="https://www.buymeacoffee.com/wycliffnjea"><img src="https://img.shields.io/badge/Buy%20me%20a%20coffee-%E2%98%95-black?style=for-the-badge" alt="Buy me a coffee" /></a>
+
+## License
+
+MIT. See [LICENSE](LICENSE). Made by Wycliff Njenga in Nairobi.

@@ -89,11 +89,13 @@ struct KitoBounceOnChange<Trigger: Equatable>: ViewModifier {
     var scale: CGFloat
     var animation: Animation
     @State private var bounced = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func body(content: Content) -> some View {
         content
             .scaleEffect(bounced ? scale : 1)
             .onChange(of: trigger) { _ in
+                guard !reduceMotion else { return }
                 withAnimation(animation) { bounced = true }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
                     withAnimation(animation) { bounced = false }
@@ -107,11 +109,15 @@ struct KitoShakeOnChange<Trigger: Equatable>: ViewModifier {
     var trigger: Trigger
     var animation: Animation
     @State private var shakes: CGFloat = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func body(content: Content) -> some View {
         content
             .modifier(KitoButtonShakeEffect(shakes: shakes))
-            .onChange(of: trigger) { _ in withAnimation(animation) { shakes += 1 } }
+            .onChange(of: trigger) { _ in
+                guard !reduceMotion else { return }
+                withAnimation(animation) { shakes += 1 }
+            }
     }
 }
 

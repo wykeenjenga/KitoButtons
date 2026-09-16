@@ -163,7 +163,7 @@ public struct KitoCartButton: View {
     private let title: String
     private let animation: KitoCartAnimation
     private let action: () async throws -> Void
-    private var addedTitle = "Added"
+    private var addedTitle = KitoButtonsLocalization.string("cart.added", "Added")
     private var variant: KitoButtonVariant = .primary
     private var size: KitoButtonSize = .medium
     private var isFullWidth = false
@@ -180,14 +180,15 @@ public struct KitoCartButton: View {
     @State private var sourceID = UUID()
     @Environment(\.kitoButtonTheme) private var theme
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    public init(_ title: String = "Add to cart", animation: KitoCartAnimation = .rollingCart, action: @escaping () async throws -> Void) {
+    public init(_ title: String = KitoButtonsLocalization.string("cart.addToCart", "Add to cart"), animation: KitoCartAnimation = .rollingCart, action: @escaping () async throws -> Void) {
         self.title = title
         self.animation = animation
         self.action = action
     }
 
-    public init(_ title: String = "Add to cart", animation: KitoCartAnimation = .rollingCart, action: @escaping () -> Void) {
+    public init(_ title: String = KitoButtonsLocalization.string("cart.addToCart", "Add to cart"), animation: KitoCartAnimation = .rollingCart, action: @escaping () -> Void) {
         self.init(title, animation: animation, action: { @Sendable in action() } as () async throws -> Void)
     }
 
@@ -211,12 +212,12 @@ public struct KitoCartButton: View {
                     .preference(key: KitoFlightFramesKey.self, value: flight == nil ? [:] : [AnyHashable("kitocart.\(sourceID.uuidString)"): proxy.frame(in: .named("KitoFlightSpace"))])
             })
         }
-        .buttonStyle(KitoPressStyle(scale: theme.pressedScale, animation: theme.motion.press))
+        .buttonStyle(KitoPressStyle(scale: reduceMotion ? 1 : theme.pressedScale, animation: theme.motion(reducesMotion: reduceMotion).press))
         .disabled(isPlaying)
         .opacity(isEnabled ? 1 : theme.disabledOpacity)
         .modifier(KitoButtonShakeEffect(shakes: shakes))
         .accessibilityLabel(title)
-        .accessibilityValue(isPlaying ? "Adding" : "")
+        .accessibilityValue(isPlaying ? KitoButtonsLocalization.string("cart.adding", "Adding") : "")
     }
 
     // MARK: Playback
@@ -229,10 +230,20 @@ public struct KitoCartButton: View {
         #if os(iOS)
         if hapticsEnabled { UIImpactFeedbackGenerator(style: .light).impactOccurred() }
         #endif
-        let total = resolvedDuration
-        withAnimation(.linear(duration: total)) { progress = 1 }
+        // Reduce Motion: crossfade straight to the added state instead of playing the choreography.
+        let total = reduceMotion ? 0.35 : resolvedDuration
+        if reduceMotion {
+            withAnimation(.easeOut(duration: 0.15)) { contentOpacity = 0 }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.16) {
+                var transaction = Transaction(); transaction.disablesAnimations = true
+                withTransaction(transaction) { progress = 1 }
+                withAnimation(.easeIn(duration: 0.15)) { contentOpacity = 1 }
+            }
+        } else {
+            withAnimation(.linear(duration: total)) { progress = 1 }
+        }
 
-        let landing = total * animation.landingPoint
+        let landing = reduceMotion ? 0.2 : total * animation.landingPoint
         DispatchQueue.main.asyncAfter(deadline: .now() + landing) {
             guard isPlaying else { return }
             #if os(iOS)
@@ -527,13 +538,17 @@ struct KitoCartChoreography: View, Animatable {
                     .opacity(spinnerOn ? 1 : 0)
 
                 KitoBurst(progress: burstT, color: successColor, radius: height * 0.9)
+                // Centred tick while the button is a circle…
                 check(checkDraw, color: colors.foreground, lineWidth: 3, side: icon * 1.2)
                     .scaleEffect(1 + 0.15 * KitoEase.pulse(KitoEase.segment(p, 0.75, 0.9)))
-                    .offset(x: -KitoEase.lerp(0, 14, expand) * (addedTitle.isEmpty ? 0 : 1))
-                    .opacity(p > 0.62 ? 1 : 0)
-                label(addedTitle)
-                    .offset(x: icon * 0.9)
-                    .opacity(expand)
+                    .opacity(p > 0.62 ? 1 - expand : 0)
+                // …then a normal "✓ Added" row once it has expanded again.
+                HStack(spacing: 8) {
+                    check(1, color: colors.foreground, lineWidth: 3)
+                    label(addedTitle)
+                }
+                .opacity(expand)
+                .scaleEffect(0.9 + 0.1 * expand)
             }
         }
     }

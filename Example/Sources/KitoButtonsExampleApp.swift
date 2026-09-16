@@ -19,6 +19,32 @@ struct KitoButtonsExampleApp: App {
 /// Everything the theme exposes, adjustable live. Black (the label colour) is the default tint;
 /// pick any colour to see the whole gallery re-themed.
 final class ButtonAppearance: ObservableObject {
+    enum Language: String, CaseIterable, Identifiable {
+        case system, en, sw, fr
+        var id: String { rawValue }
+        var title: String {
+            switch self {
+            case .system: return "System"
+            case .en: return "English"
+            case .sw: return "Kiswahili"
+            case .fr: return "Français"
+            }
+        }
+    }
+
+    /// Switches KitoButtons' own strings (default cart titles, accessibility values) at runtime.
+    @Published var language: Language = .system {
+        didSet {
+            guard language != .system,
+                  let path = KitoButtonsLocalization.bundle.path(forResource: "Localizable", ofType: "strings", inDirectory: nil, forLocalization: language.rawValue),
+                  let table = NSDictionary(contentsOfFile: path) as? [String: String] else {
+                KitoButtonsLocalization.provider = nil
+                return
+            }
+            KitoButtonsLocalization.provider = { key, _ in table[key] }
+        }
+    }
+
     enum Shape: String, CaseIterable, Identifiable {
         case capsule, rounded, rectangle
         var id: String { rawValue }
@@ -110,6 +136,7 @@ struct ContentView: View {
         .environmentObject(appearance)
         .kitoButtonTheme(appearance.theme)
         .tint(appearance.tint ?? .primary)
+        .id(appearance.language)
         .preferredColorScheme(appearance.mode.colorScheme)
     }
 }
@@ -120,6 +147,13 @@ struct AppearanceScreen: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section("Language") {
+                    Picker("Language", selection: $appearance.language) {
+                        ForEach(ButtonAppearance.Language.allCases) { Text($0.title).tag($0) }
+                    }.pickerStyle(.segmented)
+                    Text("Default cart titles and accessibility text switch instantly.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
                 Section("Theme") {
                     Picker("Mode", selection: $appearance.mode) {
                         ForEach(ButtonAppearance.Mode.allCases) { Text($0.rawValue.capitalized).tag($0) }

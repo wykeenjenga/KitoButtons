@@ -120,7 +120,7 @@ public struct KitoButtonTheme: Sendable {
     }
 
     public static var defaultTint: Color {
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         return Color(UIColor.label)
         #elseif os(macOS)
         return Color(NSColor.labelColor)
@@ -130,7 +130,7 @@ public struct KitoButtonTheme: Sendable {
     }
 
     public static var defaultOnTint: Color {
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         return Color(UIColor.systemBackground)
         #elseif os(macOS)
         return Color(NSColor.windowBackgroundColor)
@@ -138,6 +138,9 @@ public struct KitoButtonTheme: Sendable {
         return .white
         #endif
     }
+
+    /// Motion to use given the system Reduce Motion setting.
+    public func motion(reducesMotion: Bool) -> KitoButtonMotion { reducesMotion ? .subtle : motion }
 
     public func colors(for variant: KitoButtonVariant) -> KitoButtonColors {
         if let custom = overrides[variant] { return custom }
