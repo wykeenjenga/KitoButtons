@@ -177,7 +177,7 @@ struct AboutScreen: View {
                 Section("Community") {
                     Link(destination: URL(string: "https://github.com/wykeenjenga/KitoButtons/issues/new/choose")!) { Label("Report a bug or request a feature", systemImage: "exclamationmark.bubble") }
                     Link(destination: URL(string: "https://github.com/wykeenjenga/KitoButtons/blob/main/CONTRIBUTING.md")!) { Label("Contributing guide", systemImage: "person.2") }
-                    Link(destination: URL(string: "https://www.buymeacoffee.com/wykeenjenga")!) { Label("Buy me a coffee", systemImage: "cup.and.saucer") }
+                    Link(destination: URL(string: "https://www.buymeacoffee.com/wycliffnjea")!) { Label("Buy me a coffee", systemImage: "cup.and.saucer") }
                 }
                 Section {
                     Text("Made by Wycliff Njenga in Nairobi. MIT licensed.")
