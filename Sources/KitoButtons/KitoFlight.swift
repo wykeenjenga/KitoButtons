@@ -215,11 +215,15 @@ public struct KitoBadgeButton: View {
 
     public var body: some View {
         Button(action: action) {
+            // The badge lives inside the view's own bounds so toolbars and clipping containers
+            // never cut it off.
             ZStack(alignment: .topTrailing) {
                 Image(systemName: count > 0 ? systemImage + ".fill" : systemImage)
                     .font(.system(size: iconSize, weight: .medium))
                     .foregroundColor(iconColor ?? theme.tint)
-                    .frame(width: iconSize + 16, height: iconSize + 16)
+                    .frame(width: iconSize + 12, height: iconSize + 12)
+                    .padding(.top, 8)
+                    .padding(.trailing, 10)
                 if count > 0 {
                     Text(count > 99 ? "99+" : "\(count)")
                         .font(.caption2.weight(.bold))
@@ -227,7 +231,6 @@ public struct KitoBadgeButton: View {
                         .padding(.horizontal, 5)
                         .padding(.vertical, 2)
                         .background(Capsule().fill(badgeColor))
-                        .offset(x: 4, y: -2)
                         .transition(.scale.combined(with: .opacity))
                 }
             }
