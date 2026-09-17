@@ -44,12 +44,13 @@ public struct KitoButtonStyle: ButtonStyle {
         configuration.label
             .font(size.font)
             .foregroundColor(colors.foreground)
+            .modifier(LinkUnderline(enabled: isLink && theme.underlinesLink, color: colors.foreground))
             .opacity(phase == .loading ? 0 : 1)
             .overlay {
                 if phase == .loading {
                     ProgressView()
                         .progressViewStyle(.circular)
-                        .tint(colors.foreground)
+                        .tint(theme.loadingForeground ?? colors.foreground)
                         .scaleEffect(size == .small ? 0.8 : 1)
                         .transition(.opacity)
                 }
@@ -79,9 +80,13 @@ public struct KitoButtonStyle: ButtonStyle {
             .animation(theme.motion(reducesMotion: reduceMotion).morph, value: phase)
     }
 
-    /// Variant colours, recoloured for success/failure phases.
+    /// Variant colours, recoloured for loading/success/failure phases.
     private var resolvedColors: KitoButtonColors {
         let base = theme.colors(for: variant)
+        if phase == .loading, theme.loadingBackground != nil || theme.loadingForeground != nil {
+            let background = theme.loadingBackground ?? base.background
+            return KitoButtonColors(background: background, foreground: theme.loadingForeground ?? base.foreground, border: base.border == .clear ? .clear : (theme.loadingBackground ?? base.border), pressedBackground: background)
+        }
         let accent: Color?
         switch phase {
         case .success: accent = theme.successColor
@@ -374,6 +379,20 @@ public struct KitoButton: View {
     public func flies<Content: View, Target: Hashable>(to target: Target, with controller: KitoFlightController, size: CGSize = CGSize(width: 44, height: 44), arcHeight: CGFloat = 120, @ViewBuilder content: @escaping () -> Content) -> KitoButton {
         mutating {
             $0.flight = FlightRequest(controller: controller, target: AnyHashable(target), size: size, arcHeight: arcHeight, content: { AnyView(content()) })
+        }
+    }
+}
+
+
+/// Applies `.underline` where the API exists (iOS 16 / macOS 13); older systems draw the plain title.
+struct LinkUnderline: ViewModifier {
+    let enabled: Bool
+    let color: Color
+    func body(content: Content) -> some View {
+        if enabled, #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, visionOS 1.0, *) {
+            content.underline(true, color: color)
+        } else {
+            content
         }
     }
 }

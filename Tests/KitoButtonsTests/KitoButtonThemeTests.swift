@@ -121,3 +121,20 @@ final class KitoButtonsLocalizationTests: XCTestCase {
         XCTAssertEqual(KitoButtonsLocalization.string("missing", "Fallback"), "Fallback")
     }
 }
+
+final class KitoButtonReviewTests: XCTestCase {
+    func testCustomSize() {
+        let size = KitoButtonSize.custom(height: 52, font: .system(size: 15, weight: .semibold), horizontalPadding: 18, iconSize: 16)
+        XCTAssertEqual(size.height, 52)
+        XCTAssertEqual(size.horizontalPadding, 18)
+        XCTAssertEqual(size.iconSize, 16)
+        XCTAssertEqual(size, KitoButtonSize.custom(height: 52, font: .system(size: 15, weight: .semibold), horizontalPadding: 18, iconSize: 16))
+    }
+
+    func testLoadingColourDefaults() {
+        let theme = KitoButtonTheme()
+        XCTAssertNil(theme.loadingBackground)
+        XCTAssertNil(theme.loadingForeground)
+        XCTAssertTrue(theme.underlinesLink)
+    }
+}

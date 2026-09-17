@@ -90,6 +90,7 @@ KitoButton("Delete") {}.variant(.destructive)
 KitoButton("Learn more") {}.variant(.link)
 
 .size(.small) / .size(.medium) / .size(.large)
+.size(.custom(height: 52, font: .system(size: 15, weight: .semibold), horizontalPadding: 20, iconSize: 16))
 ```
 
 ## Icons
@@ -123,6 +124,9 @@ Presets: `KitoButtonTheme.default`, `.black` (always black), `.accent` (uses you
     theme.borderWidth = 1.5
     theme.shadow = KitoButtonShadow()
     theme.pressedScale = 0.97
+    theme.loadingBackground = Color(.systemGray3)   // fill while loading; spinner uses loadingForeground
+    theme.loadingForeground = .white
+    theme.underlinesLink = true                     // underline the .link variant (iOS 16+)
     theme.overrides[.primary] = KitoButtonColors(background: .black, foreground: .yellow)
 }
 ```
