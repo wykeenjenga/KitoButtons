@@ -26,33 +26,39 @@ public enum KitoButtonVariant: Hashable, Sendable {
 
 public enum KitoButtonSize: Hashable, Sendable {
     case small, medium, large
+    /// Your own metrics, e.g. `.custom(height: 52, font: .system(size: 15, weight: .semibold))`.
+    case custom(height: CGFloat, font: Font, horizontalPadding: CGFloat = 20, iconSize: CGFloat = 17)
 
-    var height: CGFloat {
+    public var height: CGFloat {
         switch self {
         case .small: return 36
         case .medium: return 48
         case .large: return 56
+        case .custom(let height, _, _, _): return height
         }
     }
-    var horizontalPadding: CGFloat {
+    public var horizontalPadding: CGFloat {
         switch self {
         case .small: return 14
         case .medium: return 20
         case .large: return 24
+        case .custom(_, _, let padding, _): return padding
         }
     }
-    var font: Font {
+    public var font: Font {
         switch self {
         case .small: return .subheadline.weight(.semibold)
         case .medium: return .body.weight(.semibold)
         case .large: return .title3.weight(.semibold)
+        case .custom(_, let font, _, _): return font
         }
     }
-    var iconSize: CGFloat {
+    public var iconSize: CGFloat {
         switch self {
         case .small: return 14
         case .medium: return 17
         case .large: return 20
+        case .custom(_, _, _, let icon): return icon
         }
     }
 }
@@ -91,6 +97,12 @@ public struct KitoButtonTheme: Sendable {
     public var shadow: KitoButtonShadow? = nil
     public var animation: Animation? = .easeOut(duration: 0.12)
     public var iconSpacing: CGFloat = 8
+    /// Fill used while a button is loading; nil keeps the variant's own background.
+    public var loadingBackground: Color? = nil
+    /// Spinner colour while loading; nil keeps the variant's foreground.
+    public var loadingForeground: Color? = nil
+    /// Underline the `.link` variant's title (needs iOS 16 / macOS 13; ignored earlier).
+    public var underlinesLink: Bool = true
     /// Fill/foreground used while a button shows its success phase.
     public var successColor: Color = .green
     /// Fill/foreground used while a button shows its failure phase.
