@@ -227,7 +227,7 @@ public struct KitoBadgeButton: View {
                     .padding(.trailing, 10)
                 if count > 0 {
                     Text(count > 99 ? "99+" : "\(count)")
-                        .font(.caption2.weight(.bold))
+                        .font(theme.fontFamily?.font(size: 11, weight: .bold, relativeTo: .caption2) ?? .caption2.weight(.bold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 5)
                         .padding(.vertical, 2)

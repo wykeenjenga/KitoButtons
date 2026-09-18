@@ -19,7 +19,7 @@
 
 /* Begin PBXFileReference section */
 		0D4BCDF174580CA34C620EF6 /* SamplesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SamplesScreen.swift; sourceTree = "<group>"; };
-		18EFFEBAA4DB64763ABD856B /* wt-accessibility */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "wt-accessibility"; path = ..; sourceTree = SOURCE_ROOT; };
+		1F116324D688588AA03D1CFD /* wt-buttons-customfont */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "wt-buttons-customfont"; path = ..; sourceTree = SOURCE_ROOT; };
 		26D6365EBBC3144172912AB1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		35A6892D46E25B89553C5A83 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		47B1722F80FAB09A7F92BC4F /* Sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sample.swift; sourceTree = "<group>"; };
@@ -66,7 +66,7 @@
 		7D2CA6BB2BDBF354D52BF728 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				18EFFEBAA4DB64763ABD856B /* wt-accessibility */,
+				1F116324D688588AA03D1CFD /* wt-buttons-customfont */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
