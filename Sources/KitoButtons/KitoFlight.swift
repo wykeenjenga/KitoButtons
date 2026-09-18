@@ -204,6 +204,7 @@ public struct KitoBadgeButton: View {
     private var iconColor: Color? = nil
     private var iconSize: CGFloat = 22
     private var landingTrigger: Int = 0
+    private var accessibilityLabelOverride: String?
 
     @Environment(\.kitoButtonTheme) private var theme
 
@@ -240,9 +241,19 @@ public struct KitoBadgeButton: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(KitoButtonsLocalization.format("badge.items", "%@, %d items", systemImage, count))
+        .accessibilityLabel(Self.accessibilityLabel(systemImage: systemImage, count: count, override: accessibilityLabelOverride))
     }
 
+    /// Extracted so it's testable without a view-hosting harness.
+    static func accessibilityLabel(systemImage: String, count: Int, override: String?) -> String {
+        let name = override ?? systemImage
+        guard count > 0 else { return name }
+        return KitoButtonsLocalization.format("badge.items", "%@, %d items", name, count)
+    }
+
+    /// A human-readable name announced by VoiceOver (e.g. "Shopping cart"), used in place of the
+    /// raw SF Symbol name. Localize it yourself, same as any other user-facing string.
+    public func accessibilityLabel(_ label: String) -> KitoBadgeButton { var c = self; c.accessibilityLabelOverride = label; return c }
     public func badgeColor(_ color: Color) -> KitoBadgeButton { var c = self; c.badgeColor = color; return c }
     public func iconColor(_ color: Color?) -> KitoBadgeButton { var c = self; c.iconColor = color; return c }
     public func iconSize(_ size: CGFloat) -> KitoBadgeButton { var c = self; c.iconSize = size; return c }

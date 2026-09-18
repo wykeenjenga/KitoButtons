@@ -155,6 +155,7 @@ public struct KitoButton: View {
     @State private var sourceID = UUID()
     @Environment(\.kitoButtonTheme) private var theme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     private var motion: KitoButtonMotion { theme.motion(reducesMotion: reduceMotion) }
 
     private struct FlightRequest {
@@ -219,8 +220,11 @@ public struct KitoButton: View {
                 if iconPlacement == .leading { icon }
                 if let displayedTitle {
                     Text(displayedTitle)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
+                        // At accessibility Dynamic Type sizes, wrap onto a second line instead of
+                        // scaling text down below what the user asked for.
+                        .lineLimit(dynamicTypeSize.isAccessibilitySize ? 2 : 1)
+                        .minimumScaleFactor(dynamicTypeSize.isAccessibilitySize ? 1 : 0.8)
+                        .multilineTextAlignment(.center)
                         .id(displayedTitle)
                         .transition(.opacity.combined(with: .scale(scale: 0.9)))
                 }
