@@ -133,6 +133,36 @@ Presets: `KitoButtonTheme.default`, `.black` (always black), `.accent` (uses you
 
 Set it once at the root of your app and override per screen or per button.
 
+### Custom fonts, set once at launch
+
+Most custom fonts (Inter, Poppins, your own brand typeface) ship as separate files per weight —
+`"Inter-Regular"`, `"Inter-SemiBold"` — not one name SwiftUI can re-weight with `.weight()`.
+`KitoFontFamily` takes the actual PostScript name for each weight you have; `theme.fontFamily`
+then applies it to every button's title at the size/weight that size would otherwise use. Set it
+once, e.g. in your `App`'s `init()`, and every button picks it up without wrapping a single screen
+in a modifier:
+
+```swift
+@main
+struct MyApp: App {
+    init() {
+        KitoButtonTheme.default = .custom(KitoFontFamily(
+            regular: "Inter-Regular",
+            medium: "Inter-Medium",
+            semibold: "Inter-SemiBold",
+            bold: "Inter-Bold"
+        ))
+    }
+    var body: some Scene { WindowGroup { ContentView() } }
+}
+```
+
+`.custom(height:font:...)` sizes always keep the exact `Font` you passed them — you already chose
+it explicitly, so a global family override won't second-guess it. An explicit
+`.kitoButtonTheme(...)` anywhere in your view hierarchy, including the `.black`/`.accent` presets,
+still overrides this for that subtree; build from `.default` after setting it if you need both a
+preset's tint and your custom font.
+
 ## Phases: loading → tick / shake
 
 Async actions drive a `KitoButtonPhase` automatically. Opt into result feedback and the icon morphs

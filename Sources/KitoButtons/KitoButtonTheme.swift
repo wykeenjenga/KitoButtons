@@ -111,9 +111,54 @@ public struct KitoButtonTheme: Sendable {
     public var motion: KitoButtonMotion = .default
     /// Overrides for any variant.
     public var overrides: [KitoButtonVariant: KitoButtonColors] = [:]
+    /// When set, every button's title uses this family instead of the size's system font, at the
+    /// same size/weight the size would otherwise use. `.custom` sizes keep the exact `Font` you
+    /// passed them, since you already chose it explicitly. Set via `.custom(_:)` below.
+    public var fontFamily: KitoFontFamily? = nil
 
     public init() {}
-    public static let `default` = KitoButtonTheme()
+
+    /// The theme every button falls back to when nothing in its view hierarchy sets
+    /// `.kitoButtonTheme(...)`. Set this **once**, e.g. in your `App`'s `init()`, to apply a look
+    /// (a custom font, a brand tint) app-wide without wrapping every screen in a modifier:
+    ///
+    /// ```swift
+    /// @main
+    /// struct MyApp: App {
+    ///     init() { KitoButtonTheme.default = .custom(myBrandFont) }
+    ///     var body: some Scene { WindowGroup { ContentView() } }
+    /// }
+    /// ```
+    ///
+    /// An explicit `.kitoButtonTheme(...)` anywhere in the view hierarchy — including the
+    /// built-in `.black`/`.accent` presets, neither of which carries a custom font — still
+    /// overrides this for that subtree. Build from `.default` rather than a preset if you need
+    /// both a preset's tint and your custom font.
+    public static var `default` = KitoButtonTheme()
+
+    /// Builds a theme where every button title uses `family`, at the size/weight this theme would
+    /// otherwise use. Dynamic Type still scales, via `relativeTo:`.
+    ///
+    /// ```swift
+    /// KitoButtonTheme.default = .custom(KitoFontFamily(regular: "Inter-Regular", semibold: "Inter-SemiBold"))
+    /// ```
+    public static func custom(_ family: KitoFontFamily, base: KitoButtonTheme = KitoButtonTheme()) -> KitoButtonTheme {
+        var theme = base
+        theme.fontFamily = family
+        return theme
+    }
+
+    /// Resolves `size`'s title font, substituting `fontFamily` for the system font at the same
+    /// size/weight when one is set. `.custom` sizes always keep the exact `Font` they were given.
+    public func font(for size: KitoButtonSize) -> Font {
+        guard let fontFamily else { return size.font }
+        switch size {
+        case .small: return fontFamily.font(size: 15, weight: .semibold, relativeTo: .subheadline)
+        case .medium: return fontFamily.font(size: 17, weight: .semibold, relativeTo: .body)
+        case .large: return fontFamily.font(size: 20, weight: .semibold, relativeTo: .title3)
+        case .custom: return size.font
+        }
+    }
 
     /// Pure black fill regardless of appearance (use when your screens are always light).
     public static var black: KitoButtonTheme {
@@ -174,7 +219,9 @@ public struct KitoButtonTheme: Sendable {
 }
 
 private struct KitoButtonThemeKey: EnvironmentKey {
-    static let defaultValue = KitoButtonTheme.default
+    // Computed, not `let`: re-reads `KitoButtonTheme.default` on every fallback so setting it
+    // once at launch (before any button's environment is first read) takes effect everywhere.
+    static var defaultValue: KitoButtonTheme { KitoButtonTheme.default }
 }
 
 public extension EnvironmentValues {

@@ -200,6 +200,7 @@ public struct KitoCartButton: View {
                 title: title,
                 addedTitle: addedTitle,
                 size: size,
+                titleFont: theme.font(for: size),
                 colors: theme.colors(for: variant),
                 successColor: theme.successColor,
                 shape: theme.shape,
@@ -324,6 +325,9 @@ struct KitoCartChoreography: View, Animatable {
     let title: String
     let addedTitle: String
     let size: KitoButtonSize
+    /// Resolved by the caller (`theme.font(for: size)`), since this view has no environment
+    /// access of its own — everything it draws with comes in through its init.
+    let titleFont: Font
     let colors: KitoButtonColors
     let successColor: Color
     let shape: KitoButtonShape
@@ -367,7 +371,7 @@ struct KitoCartChoreography: View, Animatable {
 
     private func label(_ text: String, color: Color? = nil) -> some View {
         Text(text)
-            .font(size.font)
+            .font(titleFont)
             .foregroundColor(color ?? colors.foreground)
             .lineLimit(1)
     }

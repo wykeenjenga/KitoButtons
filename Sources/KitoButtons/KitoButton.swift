@@ -42,7 +42,7 @@ public struct KitoButtonStyle: ButtonStyle {
         let isLink = variant == .link
 
         configuration.label
-            .font(size.font)
+            .font(theme.font(for: size))
             .foregroundColor(colors.foreground)
             .modifier(LinkUnderline(enabled: isLink && theme.underlinesLink, color: colors.foreground))
             .opacity(phase == .loading ? 0 : 1)
