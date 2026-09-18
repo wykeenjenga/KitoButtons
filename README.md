@@ -187,6 +187,7 @@ NavigationStack { list }
     .kitoFlightLayer(flights)                     // hosts the in-flight items
     .toolbar {
         KitoBadgeButton(systemImage: "cart", count: cart.count) { showCart = true }
+            .accessibilityLabel("Shopping cart")   // VoiceOver announces this, not "cart"
             .bounces(on: flights.landings(on: "cart"))
             .kitoFlightAnchor("cart")             // the target
     }
