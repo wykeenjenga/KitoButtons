@@ -132,7 +132,8 @@ KitoButton("Pay", systemImage: "creditcard") {
 - `.leading { }` / `.trailing { }` replace the plain icon in that position with any view (a flag,
   a composed label, a price) — it inherits the variant's foreground colour unless you set your own.
 - `.label { }` replaces the whole title/icon row; phase chrome (spinner, shake, success/failure
-  fill) still wraps around it.
+  fill) still wraps around it. VoiceOver then reads your content rather than the title the button
+  was constructed with — add `.accessibilityLabel(_:)` if that content is icon-only.
 - `.subtitle(_:)` adds a second, smaller line under the title.
 - `.contentAlignment(.leading/.center/.trailing/.spaceBetween)` — only `.spaceBetween` does
   anything on its own (it puts a spacer between the title and a trailing slot); the others matter
@@ -144,7 +145,8 @@ KitoButton("Pay", systemImage: "creditcard") {
 - `.pressedStyle(_:)` / `theme.pressedStyle`: `.scale` (default, unchanged), `.darken` (fill only,
   no scale or opacity), `.none`.
 - `.small` and `.link` buttons get an automatic 44×44pt minimum tap target — their drawn chrome is
-  unchanged, only the tappable area grows.
+  unchanged, only the tappable area grows. `.fullWidth()` doesn't opt out of this: it sets the
+  width, while `.small` is still 36pt tall.
 - Loading posts a VoiceOver "In progress" announcement the moment the phase changes, in addition to
   the existing `accessibilityValue`.
 

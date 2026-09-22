@@ -135,7 +135,10 @@ public struct KitoButtonStyle: ButtonStyle {
             case .filled(let background, let foreground):
                 return KitoButtonColors(background: background, foreground: foreground, pressedBackground: background)
             case .outlined:
-                return KitoButtonColors(background: .clear, foreground: .secondary, border: base.foreground.opacity(0.35), pressedBackground: .clear)
+                // Derived from .secondary, not base.foreground: on a filled variant the latter is
+                // the on-tint colour (white in light mode), which would vanish against the now
+                // clear background.
+                return KitoButtonColors(background: .clear, foreground: .secondary, border: Color.secondary.opacity(0.35), pressedBackground: .clear)
             }
         }
         if phase == .loading, loadingBackground != nil || loadingForeground != nil {
@@ -205,6 +208,7 @@ public struct KitoButton: View {
     private var accessibilityLabelFallback: String?
     // Internal, not private: read back directly in tests without a view-hosting harness.
     var accessibilityIdentifierValue: String?
+    var accessibilityLabelOverride: String?
     var hintText: String?
     var leadingSlot: (() -> AnyView)?
     var trailingSlot: (() -> AnyView)?
@@ -297,7 +301,7 @@ public struct KitoButton: View {
         .background(anchorReader)
         // 44x44pt minimum hit target for compact variants, without growing the drawn chrome.
         .modifier(KitoHitTargetModifier(active: expandsHitTarget))
-        .accessibilityLabel(displayedTitle ?? accessibilityLabelFallback ?? "")
+        .modifier(KitoAccessibilityLabelModifier(label: resolvedAccessibilityLabel))
         .kitoAccessibilityHint(hintText)
         .accessibilityAddTraits(phase == .loading ? .updatesFrequently : [])
         .accessibilityValue(accessibilityValue)
@@ -310,10 +314,21 @@ public struct KitoButton: View {
     }
 
     /// Small/link buttons can draw well under the 44x44pt minimum recommended tap target; expand
-    /// only their tappable area (not their visible size) to meet it. Internal, not private: read
-    /// directly in tests without a view-hosting harness.
+    /// only their tappable area (not their visible size) to meet it. `.fullWidth()` doesn't help
+    /// here — it only sets the width, while `.small` stays 36pt tall and `.link` has no minimum
+    /// height at all. Internal, not private: read directly in tests without a view-hosting harness.
     var expandsHitTarget: Bool {
-        (size == .small || variant == .link) && !isFullWidth
+        size == .small || variant == .link
+    }
+
+    /// The label VoiceOver reads. An explicit `.accessibilityLabel(_:)` always wins; otherwise a
+    /// `.label { }` override supplies its own accessibility content, so returning nil there lets
+    /// SwiftUI derive it from what's actually on screen rather than a title that isn't.
+    /// Internal, not private: asserted directly in tests.
+    var resolvedAccessibilityLabel: String? {
+        if let accessibilityLabelOverride { return accessibilityLabelOverride }
+        if labelOverride != nil { return nil }
+        return displayedTitle ?? accessibilityLabelFallback ?? ""
     }
 
     @ViewBuilder private var content: some View {
@@ -326,7 +341,9 @@ public struct KitoButton: View {
                 if contentAlignmentValue == .spaceBetween { Spacer(minLength: 8) }
                 trailingElement
             }
-            .frame(maxWidth: (isFullWidth && contentAlignmentValue != .center) ? .infinity : nil, alignment: contentFrameAlignment)
+            // Alignment only means something when the row has room to spare, which happens under
+            // .fullWidth() and equally under an explicit .minWidth(_:).
+            .frame(maxWidth: ((isFullWidth || minWidthOverride != nil) && contentAlignmentValue != .center) ? .infinity : nil, alignment: contentFrameAlignment)
         }
     }
 
@@ -354,7 +371,7 @@ public struct KitoButton: View {
                     // scaling text down below what the user asked for.
                     .lineLimit(dynamicTypeSize.isAccessibilitySize ? 2 : 1)
                     .minimumScaleFactor(dynamicTypeSize.isAccessibilitySize ? 1 : 0.8)
-                    .multilineTextAlignment(.center)
+                    .multilineTextAlignment(titleTextAlignment)
                     .id(displayedTitle)
                     .transition(.opacity.combined(with: .scale(scale: 0.9)))
                 if let subtitleText {
@@ -368,6 +385,15 @@ public struct KitoButton: View {
     }
 
     var titleBlockAlignment: HorizontalAlignment {
+        switch contentAlignmentValue {
+        case .trailing: return .trailing
+        case .leading, .spaceBetween: return .leading
+        case .center: return .center
+        }
+    }
+
+    /// Wrapped titles (accessibility Dynamic Type sizes) follow the same alignment as the row.
+    var titleTextAlignment: TextAlignment {
         switch contentAlignmentValue {
         case .trailing: return .trailing
         case .leading, .spaceBetween: return .leading
@@ -534,6 +560,10 @@ public struct KitoButton: View {
     /// A genuine VoiceOver hint ("Double tap to pay"), read after the label. Distinct from the
     /// `accessibilityLabel:` initializer parameter, which is the label itself.
     public func accessibilityHint(_ hint: String) -> KitoButton { mutating { $0.hintText = hint } }
+    /// What VoiceOver reads for this button. Only needed when `.label { }` draws content SwiftUI
+    /// can't describe on its own (an icon-only custom label, say) — a plain title, or a custom
+    /// label containing text, already reads correctly without this.
+    public func accessibilityLabel(_ label: String) -> KitoButton { mutating { $0.accessibilityLabelOverride = label } }
 
     /// Content before the title, replacing the plain icon in that position (a flag, a composed
     /// view). Inherits the variant's foreground colour unless the view sets its own.
@@ -570,6 +600,19 @@ struct LinkUnderline: ViewModifier {
     func body(content: Content) -> some View {
         if enabled, #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, visionOS 1.0, *) {
             content.underline(true, color: color)
+        } else {
+            content
+        }
+    }
+}
+
+/// Applies `.accessibilityLabel` only when there is one to apply. Passing nil leaves the view's
+/// own derived accessibility content alone, which is what a custom `.label { }` needs.
+struct KitoAccessibilityLabelModifier: ViewModifier {
+    let label: String?
+    func body(content: Content) -> some View {
+        if let label {
+            content.accessibilityLabel(label)
         } else {
             content
         }

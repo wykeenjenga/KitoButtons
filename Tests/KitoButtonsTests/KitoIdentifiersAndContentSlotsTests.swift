@@ -138,9 +138,41 @@ final class KitoHitTargetTests: XCTestCase {
         XCTAssertTrue(KitoButton("Pay") {}.variant(.link).expandsHitTarget)
     }
 
-    func testFullWidthSmallDoesNotNeedExpansion() {
-        // Already occupies the full row width, so there's no undersized target to fix.
-        XCTAssertFalse(KitoButton("Pay") {}.size(.small).fullWidth().expandsHitTarget)
+    /// fullWidth only sets the width; a .small button is still 36pt tall, so it still needs the
+    /// vertical expansion to clear 44pt.
+    func testFullWidthSmallStillExpands() {
+        XCTAssertTrue(KitoButton("Pay") {}.size(.small).fullWidth().expandsHitTarget)
+    }
+
+    func testFullWidthLinkStillExpands() {
+        XCTAssertTrue(KitoButton("Pay") {}.variant(.link).fullWidth().expandsHitTarget)
+    }
+
+    func testFullWidthMediumDoesNotExpand() {
+        XCTAssertFalse(KitoButton("Pay") {}.fullWidth().expandsHitTarget)
+    }
+}
+
+final class KitoButtonAccessibilityLabelTests: XCTestCase {
+    func testAPlainTitleIsAnnounced() {
+        XCTAssertEqual(KitoButton("Delete") {}.resolvedAccessibilityLabel, "Delete")
+    }
+
+    func testIconOnlyButtonsUseTheirInitializerLabel() {
+        XCTAssertEqual(KitoButton(systemImage: "heart", accessibilityLabel: "Like") {}.resolvedAccessibilityLabel, "Like")
+    }
+
+    /// A custom label draws its own content, so the title it was constructed with must not be
+    /// announced over it — nil lets SwiftUI derive the label from what's actually on screen.
+    func testACustomLabelDoesNotAnnounceTheStaleTitle() {
+        let button = KitoButton("Delete") {}.label { Text("Archive") }
+        XCTAssertNil(button.resolvedAccessibilityLabel)
+    }
+
+    func testAnExplicitOverrideWinsEverywhere() {
+        XCTAssertEqual(KitoButton("Delete") {}.accessibilityLabel("Remove item").resolvedAccessibilityLabel, "Remove item")
+        let custom = KitoButton("Delete") {}.label { Image(systemName: "archivebox") }.accessibilityLabel("Archive")
+        XCTAssertEqual(custom.resolvedAccessibilityLabel, "Archive")
     }
 }
 
