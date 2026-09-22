@@ -433,6 +433,47 @@ enum SampleCatalog {
         """) {
             Button("Save") {}.buttonStyle(.kito(.outlined, size: .medium, fullWidth: true))
         },
+        Sample("Pay button with trailing price", "Leading card icon, title, and a trailing price slot pushed to the far edge.", category: .utility, code: """
+        KitoButton("Pay", systemImage: "creditcard") {
+            try await checkout.pay()
+        }
+        .trailing { Text("KES 1,500").fontWeight(.semibold) }
+        .contentAlignment(.spaceBetween)
+        .accessibilityIdentifier("checkout.pay")
+        .size(.large)
+        .fullWidth()
+        """) {
+            KitoButton("Pay", systemImage: "creditcard") { try await work() }
+                .trailing { Text("KES 1,500").fontWeight(.semibold) }
+                .contentAlignment(.spaceBetween)
+                .accessibilityIdentifier("checkout.pay")
+                .size(.large)
+                .fullWidth()
+        },
+        Sample("Country picker button", "A leading flag/code slot with a trailing chevron, both replacing the plain icon.", category: .utility, code: """
+        KitoButton("Country") { showPicker = true }
+            .leading { Text("🇰🇪") }
+            .trailing { Image(systemName: "chevron.down") }
+            .subtitle("Kenya, +254")
+            .variant(.outlined)
+        """) {
+            KitoButton("Country") {}
+                .leading { Text("🇰🇪") }
+                .trailing { Image(systemName: "chevron.down") }
+                .subtitle("Kenya, +254")
+                .variant(.outlined)
+        },
+        Sample("Two-line button", "A title with a smaller subtitle line, still one button.", category: .utility, code: """
+        KitoButton("Upgrade to Pro") { }
+            .subtitle("KES 800 / month, cancel anytime")
+            .variant(.tonal)
+            .fullWidth()
+        """) {
+            KitoButton("Upgrade to Pro") {}
+                .subtitle("KES 800 / month, cancel anytime")
+                .variant(.tonal)
+                .fullWidth()
+        },
         Sample("Fly to a target", "Any view can be a target; the product arcs from the button.", category: .utility, code: """
         @StateObject var flights = KitoFlightController()
 

@@ -205,6 +205,8 @@ public struct KitoBadgeButton: View {
     private var iconSize: CGFloat = 22
     private var landingTrigger: Int = 0
     private var accessibilityLabelOverride: String?
+    // Internal, not private: read back directly in tests without a view-hosting harness.
+    var accessibilityIdentifierValue: String?
 
     @Environment(\.kitoButtonTheme) private var theme
 
@@ -233,6 +235,7 @@ public struct KitoBadgeButton: View {
                         .padding(.vertical, 2)
                         .background(Capsule().fill(badgeColor))
                         .transition(.scale.combined(with: .opacity))
+                        .kitoAccessibilityIdentifier(accessibilityIdentifierValue.map { "\($0).badge" })
                 }
             }
             .kitoButtonBounce(trigger: count, animation: theme.motion.bounce)
@@ -240,6 +243,7 @@ public struct KitoBadgeButton: View {
             .animation(theme.motion.morph, value: count)
             .contentShape(Rectangle())
         }
+        .kitoAccessibilityIdentifier(accessibilityIdentifierValue)
         .buttonStyle(.plain)
         .accessibilityLabel(Self.accessibilityLabel(systemImage: systemImage, count: count, override: accessibilityLabelOverride))
     }
@@ -257,6 +261,9 @@ public struct KitoBadgeButton: View {
     public func badgeColor(_ color: Color) -> KitoBadgeButton { var c = self; c.badgeColor = color; return c }
     public func iconColor(_ color: Color?) -> KitoBadgeButton { var c = self; c.iconColor = color; return c }
     public func iconSize(_ size: CGFloat) -> KitoBadgeButton { var c = self; c.iconSize = size; return c }
+    /// Reaches the button XCUITest actually taps, e.g. `app.buttons["shop.cart"]`. The count label
+    /// gets a companion `"<id>.badge"` identifier of its own.
+    public func accessibilityIdentifier(_ id: String) -> KitoBadgeButton { var c = self; c.accessibilityIdentifierValue = id; return c }
     /// Bounce whenever this value changes, e.g. `controller.landings(on: "cart")`.
     public func bounces(on trigger: Int) -> KitoBadgeButton { var c = self; c.landingTrigger = trigger; return c }
 }
