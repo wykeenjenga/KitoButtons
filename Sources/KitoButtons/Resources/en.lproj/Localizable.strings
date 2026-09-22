@@ -5,3 +5,4 @@
 "cart.added" = "Added";
 "cart.adding" = "Adding";
 "badge.items" = "%@, %d items";
+"phase.inProgress" = "In progress";

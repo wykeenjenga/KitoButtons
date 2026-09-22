@@ -5,3 +5,4 @@
 "cart.added" = "Imeongezwa";
 "cart.adding" = "Inaongeza";
 "badge.items" = "%@, bidhaa %d";
+"phase.inProgress" = "Inaendelea";

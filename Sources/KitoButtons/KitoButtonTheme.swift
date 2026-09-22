@@ -24,6 +24,31 @@ public enum KitoButtonVariant: Hashable, Sendable {
     case link
 }
 
+/// How a button looks when `isEnabled` is false. Set per button with `.disabledStyle(_:)` or for
+/// every button via `theme.disabledStyle`.
+public enum KitoButtonDisabledStyle: Equatable, Sendable {
+    /// The variant's normal colours at `theme.disabledOpacity`. The default; unchanged from
+    /// KitoButtons' original disabled look.
+    case faded
+    /// A flat fill regardless of variant, at full opacity — e.g. a grey button instead of a dimmed one.
+    case filled(background: Color, foreground: Color)
+    /// Border-only at full opacity, in the secondary text colour.
+    case outlined
+}
+
+/// How a button reacts to being pressed. Set per button with `.pressedStyle(_:)` or for every
+/// button via `theme.pressedStyle`.
+public enum KitoButtonPressedStyle: Hashable, Sendable {
+    /// Scales down, darkens its fill and dims slightly. The default; unchanged from KitoButtons'
+    /// original press feedback.
+    case scale
+    /// Darkens its fill only — no scale or opacity change. Useful for buttons inside something
+    /// that's already animating (a card, a drag handle).
+    case darken
+    /// No press feedback at all.
+    case none
+}
+
 public enum KitoButtonSize: Hashable, Sendable {
     case small, medium, large
     /// Your own metrics, e.g. `.custom(height: 52, font: .system(size: 15, weight: .semibold))`.
@@ -64,7 +89,7 @@ public enum KitoButtonSize: Hashable, Sendable {
 }
 
 /// Colors resolved for one variant.
-public struct KitoButtonColors: Sendable {
+public struct KitoButtonColors: Equatable, Sendable {
     public var background: Color
     public var foreground: Color
     public var border: Color
@@ -94,6 +119,10 @@ public struct KitoButtonTheme: Sendable {
     public var pressedScale: CGFloat = 0.98
     public var pressedOpacity: Double = 0.9
     public var disabledOpacity: Double = 0.45
+    /// How every button looks when disabled, unless it overrides this with `.disabledStyle(_:)`.
+    public var disabledStyle: KitoButtonDisabledStyle = .faded
+    /// How every button reacts to being pressed, unless it overrides this with `.pressedStyle(_:)`.
+    public var pressedStyle: KitoButtonPressedStyle = .scale
     public var shadow: KitoButtonShadow? = nil
     public var animation: Animation? = .easeOut(duration: 0.12)
     public var iconSpacing: CGFloat = 8

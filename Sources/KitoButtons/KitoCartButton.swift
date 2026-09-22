@@ -171,6 +171,8 @@ public struct KitoCartButton: View {
     private var holdDuration: TimeInterval = 1.0
     private var hapticsEnabled = true
     private var onAdded: (() -> Void)?
+    // Internal, not private: read back directly in tests without a view-hosting harness.
+    var accessibilityIdentifierValue: String?
     private var flight: (controller: KitoFlightController, target: AnyHashable, size: CGSize, arcHeight: CGFloat, content: () -> AnyView)?
 
     @State private var progress: Double = 0
@@ -213,6 +215,7 @@ public struct KitoCartButton: View {
                     .preference(key: KitoFlightFramesKey.self, value: flight == nil ? [:] : [AnyHashable("kitocart.\(sourceID.uuidString)"): proxy.frame(in: .named("KitoFlightSpace"))])
             })
         }
+        .kitoAccessibilityIdentifier(accessibilityIdentifierValue)
         .buttonStyle(KitoPressStyle(scale: reduceMotion ? 1 : theme.pressedScale, animation: theme.motion(reducesMotion: reduceMotion).press))
         .disabled(isPlaying)
         .opacity(isEnabled ? 1 : theme.disabledOpacity)
@@ -306,6 +309,8 @@ public struct KitoCartButton: View {
     /// How long the added state stays before fading back to idle.
     public func hold(_ seconds: TimeInterval) -> KitoCartButton { mutating { $0.holdDuration = seconds } }
     public func haptics(_ enabled: Bool) -> KitoCartButton { mutating { $0.hapticsEnabled = enabled } }
+    /// Reaches the button XCUITest actually taps, e.g. `app.buttons["shop.addToCart"]`.
+    public func accessibilityIdentifier(_ id: String) -> KitoCartButton { mutating { $0.accessibilityIdentifierValue = id } }
     /// Called at the landing moment of the animation (the natural place to bump a badge count).
     public func onAdded(_ handler: @escaping () -> Void) -> KitoCartButton { mutating { $0.onAdded = handler } }
     /// Also fly `content` from this button to a `kitoFlightAnchor` when the item lands.
