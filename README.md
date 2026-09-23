@@ -2,7 +2,7 @@
 
 A comprehensive, themeable SwiftUI button toolkit: six variants, three sizes, icons, loading / success / failure phases with icon morphing, seven choreographed add-to-cart animations, fly-to-cart flights, async actions, per-button theme overrides, and a native `ButtonStyle` you can drop onto any existing `Button`.
 
-- iOS 15+, macOS 12+, tvOS 15+, watchOS 8+, visionOS 1+; pure SwiftUI, no dependencies
+- iOS 15+, macOS 12+, tvOS 15+, watchOS 9+, visionOS 1+; pure SwiftUI, no dependencies
 - Author: **Wycliff Njenga**
 - Licence: MIT
 
@@ -26,14 +26,14 @@ A comprehensive, themeable SwiftUI button toolkit: six variants, three sizes, ic
 
 1. File ▸ Add Package Dependencies…
 2. Paste `https://github.com/wykeenjenga/KitoButtons.git`
-3. Dependency rule: *Up to Next Major Version* from `1.8.0`
+3. Dependency rule: *Up to Next Major Version* from `1.8.1`
 4. Add the `KitoButtons` product to your app target
 
 **In `Package.swift`**
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/wykeenjenga/KitoButtons.git", from: "1.8.0")
+    .package(url: "https://github.com/wykeenjenga/KitoButtons.git", from: "1.8.1")
 ],
 targets: [
     .target(name: "MyApp", dependencies: ["KitoButtons"])
@@ -61,7 +61,7 @@ import KitoButtons
 | iOS | 15.0 |
 | macOS | 12.0 |
 | tvOS | 15.0 |
-| watchOS | 8.0 |
+| watchOS | 9.0 |
 | visionOS | 1.0 |
 | Swift | 5.9 |
 | Xcode | 15 |
