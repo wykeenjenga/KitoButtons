@@ -39,7 +39,8 @@ public final class KitoFlightController: ObservableObject {
         self.motion = motion
     }
 
-    /// Frame of an anchored view in the flight layer's coordinate space, if it is on screen.
+    /// Frame of an anchored view in the flight layer's coordinate space, if it is on screen. Like
+    /// every SwiftUI frame, x is measured from the physical left edge, also in right-to-left layouts.
     public func frame(of anchor: AnyHashable) -> CGRect? { frames[anchor] }
 
     /// Number of times something has landed on `target`; use it to drive badge bounces.
@@ -54,7 +55,9 @@ public final class KitoFlightController: ObservableObject {
         return true
     }
 
-    /// Flies from an explicit point to the `target` anchor.
+    /// Flies from an explicit point to the `target` anchor. `start` is in the flight layer's
+    /// coordinate space, measured from the physical left edge (as `frame(of:)` and gesture
+    /// locations are), in every layout direction.
     @discardableResult
     public func fly<Content: View>(fromPoint start: CGPoint, to target: AnyHashable, size: CGSize = CGSize(width: 44, height: 44), arcHeight: CGFloat = 120, completion: (() -> Void)? = nil, @ViewBuilder content: () -> Content) -> Bool {
         guard let to = frames[target] else { return false }
@@ -105,6 +108,7 @@ struct KitoFlightAnchorModifier: ViewModifier {
 struct KitoFlightLayerModifier: ViewModifier {
     @ObservedObject var controller: KitoFlightController
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.layoutDirection) private var layoutDirection
 
     func body(content: Content) -> some View {
         content
@@ -117,9 +121,13 @@ struct KitoFlightLayerModifier: ViewModifier {
             .overlay(
                 ZStack {
                     ForEach(controller.flights) { flight in
-                        KitoFlightView(flight: flight, animation: controller.motion.flight)
+                        KitoFlightView(flight: flight, animation: controller.motion.flight, contentLayoutDirection: layoutDirection)
                     }
                 }
+                // Anchor frames are measured in physical (left-to-right) coordinates even in a
+                // right-to-left layout, while `.position` and the arc's translation would be
+                // mirrored there. Drawing the flights left to right keeps both in the same space.
+                .environment(\.layoutDirection, .leftToRight)
                 .allowsHitTesting(false)
             )
     }
@@ -175,10 +183,12 @@ public struct KitoArcEffect: GeometryEffect {
 struct KitoFlightView: View {
     let flight: KitoFlightController.Flight
     let animation: Animation
+    var contentLayoutDirection: LayoutDirection = .leftToRight
     @State private var progress: CGFloat = 0
 
     var body: some View {
         flight.content
+            .environment(\.layoutDirection, contentLayoutDirection)
             .frame(width: flight.size.width, height: flight.size.height)
             .modifier(KitoArcEffect(progress: progress, start: flight.start, end: flight.end, arcHeight: flight.arcHeight))
             .opacity(Double(1 - max(0, progress - 0.7) / 0.3))
@@ -228,7 +238,7 @@ public struct KitoBadgeButton: View {
                     .padding(.top, 8)
                     .padding(.trailing, 10)
                 if count > 0 {
-                    Text(count > 99 ? "99+" : "\(count)")
+                    Text(count > 99 ? "\(99.formatted())+" : count.formatted())
                         .font(theme.fontFamily?.font(size: 11, weight: .bold, relativeTo: .caption2) ?? .caption2.weight(.bold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 5)

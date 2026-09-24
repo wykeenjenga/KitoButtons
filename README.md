@@ -26,14 +26,14 @@ A comprehensive, themeable SwiftUI button toolkit: six variants, three sizes, ic
 
 1. File ▸ Add Package Dependencies…
 2. Paste `https://github.com/wykeenjenga/KitoButtons.git`
-3. Dependency rule: *Up to Next Major Version* from `1.8.1`
+3. Dependency rule: *Up to Next Major Version* from `1.8.2`
 4. Add the `KitoButtons` product to your app target
 
 **In `Package.swift`**
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/wykeenjenga/KitoButtons.git", from: "1.8.1")
+    .package(url: "https://github.com/wykeenjenga/KitoButtons.git", from: "1.8.2")
 ],
 targets: [
     .target(name: "MyApp", dependencies: ["KitoButtons"])
@@ -71,7 +71,7 @@ The one-line default look is a black capsule (white in dark mode). Change it onc
 ## Quick start
 
 ```swift
-KitoButton("Continue", systemImage: "arrow.right", iconPlacement: .trailing) {
+KitoButton("Continue", systemImage: "arrow.forward", iconPlacement: .trailing) {
     await submit()            // spinner shows and the button disables until this returns
 }
 .fullWidth()
@@ -97,7 +97,7 @@ KitoButton("Learn more") {}.variant(.link)
 
 ```swift
 KitoButton("Add to cart", systemImage: "cart.badge.plus") {}
-KitoButton("Next", systemImage: "arrow.right", iconPlacement: .trailing) {}
+KitoButton("Next", systemImage: "arrow.forward", iconPlacement: .trailing) {}
 KitoButton("Pay", image: Image("mpesa")) {}
 KitoButton(systemImage: "heart", accessibilityLabel: "Like") {}   // icon-only, square
 ```
@@ -271,6 +271,13 @@ KitoButton("Add", systemImage: "cart.badge.plus") { try await cart.add(product) 
 Any view can be a source or target with `.kitoFlightAnchor(id)`, and you can launch a flight from
 code with `flights.fly(from: "product-1", to: "cart") { ... }`. `KitoArcEffect` is public if you
 want the arc motion elsewhere.
+
+## Right-to-left
+
+- Buttons mirror automatically in RTL layouts: `.leading`/`.trailing` icon placement and slots, content alignment and the add-to-cart choreographies all follow the layout direction.
+- Use `arrow.forward` / `chevron.forward` rather than `arrow.right` / `chevron.right` for "next" icons so they point the right way in Arabic and Hebrew.
+- Flights land on the right target in RTL: the flight layer draws in physical coordinates to match the anchor frames. `fly(fromPoint:)` takes a point measured from the physical left edge, and if you use `KitoArcEffect` yourself under RTL, give it physical points inside a `.leftToRight` container.
+- Badge counts use the current locale's digits.
 
 ## Motion presets
 
