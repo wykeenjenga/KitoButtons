@@ -619,16 +619,31 @@ struct KitoAccessibilityLabelModifier: ViewModifier {
     }
 }
 
-/// Expands a view's tappable area to at least 44x44pt via its frame, without changing what's
-/// drawn. Inactive is a pure passthrough so buttons that don't need it render byte-for-byte the
-/// same as before this existed.
+/// Expands a view's tappable area to at least 44x44pt without changing its layout or what's
+/// drawn: the hit-test shape reaches past the view's bounds instead of growing its frame, so a
+/// `.link` sitting under a paragraph keeps its natural line height. Inactive is a pure
+/// passthrough so buttons that don't need it render byte-for-byte the same as before this existed.
 struct KitoHitTargetModifier: ViewModifier {
     let active: Bool
     func body(content: Content) -> some View {
         if active {
-            content.frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
+            content.contentShape(KitoHitTargetShape(minimum: 44))
         } else {
             content
         }
+    }
+}
+
+/// The view's own rect, grown symmetrically on each axis that is shorter than `minimum`.
+/// Internal, not private: its geometry is asserted directly in tests.
+struct KitoHitTargetShape: Shape {
+    var minimum: CGFloat
+
+    func path(in rect: CGRect) -> Path {
+        Path(expandedRect(rect))
+    }
+
+    func expandedRect(_ rect: CGRect) -> CGRect {
+        rect.insetBy(dx: -max(0, (minimum - rect.width) / 2), dy: -max(0, (minimum - rect.height) / 2))
     }
 }
