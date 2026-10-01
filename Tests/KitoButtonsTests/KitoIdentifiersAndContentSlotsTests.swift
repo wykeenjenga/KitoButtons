@@ -126,6 +126,22 @@ final class KitoPerButtonOverrideTests: XCTestCase {
 }
 
 final class KitoHitTargetTests: XCTestCase {
+
+    func testHitTargetShapeGrowsShortAxesToTheMinimumAroundTheCentre() {
+        let rect = KitoHitTargetShape(minimum: 44).expandedRect(CGRect(x: 10, y: 100, width: 90, height: 20))
+        XCTAssertEqual(rect, CGRect(x: 10, y: 88, width: 90, height: 44))
+    }
+
+    func testHitTargetShapeLeavesLargeRectsAlone() {
+        let original = CGRect(x: 0, y: 0, width: 120, height: 52)
+        XCTAssertEqual(KitoHitTargetShape(minimum: 44).expandedRect(original), original)
+    }
+
+    func testHitTargetShapeGrowsBothAxesOfATinyIcon() {
+        let rect = KitoHitTargetShape(minimum: 44).expandedRect(CGRect(x: 0, y: 0, width: 16, height: 16))
+        XCTAssertEqual(rect, CGRect(x: -14, y: -14, width: 44, height: 44))
+    }
+
     func testMediumPrimaryDoesNotExpand() {
         XCTAssertFalse(KitoButton("Pay") {}.expandsHitTarget)
     }
