@@ -247,3 +247,17 @@ final class KitoButtonStylePureFunctionTests: XCTestCase {
         XCTAssertEqual(resolved.background, .green)
     }
 }
+
+final class KitoIconSlotTests: XCTestCase {
+    func testTitleOnlyButtonLeavesTheIconSlotOut() {
+        XCTAssertFalse(KitoButton("Continue") {}.showsIcon)
+    }
+
+    func testSystemImageButtonKeepsTheIconSlot() {
+        XCTAssertTrue(KitoButton("Next", systemImage: "arrow.forward") {}.showsIcon)
+    }
+
+    func testImageButtonKeepsTheIconSlot() {
+        XCTAssertTrue(KitoButton("Pay", image: Image(systemName: "creditcard")) {}.showsIcon)
+    }
+}
