@@ -350,7 +350,7 @@ public struct KitoButton: View {
     @ViewBuilder private var leadingElement: some View {
         if let leadingSlot {
             leadingSlot()
-        } else if iconPlacement == .leading {
+        } else if iconPlacement == .leading, showsIcon {
             icon
         }
     }
@@ -358,8 +358,18 @@ public struct KitoButton: View {
     @ViewBuilder private var trailingElement: some View {
         if let trailingSlot {
             trailingSlot()
-        } else if iconPlacement == .trailing {
+        } else if iconPlacement == .trailing, showsIcon {
             icon
+        }
+    }
+
+    /// Whether the icon slot has anything to draw. An empty slot is left out of the row entirely;
+    /// otherwise the row's spacing still applies to it and a title-only button sits off-centre by
+    /// half of `theme.iconSpacing`. Internal, not private: asserted directly in tests.
+    var showsIcon: Bool {
+        switch phase {
+        case .success, .failure: return true
+        default: return systemImage != nil || image != nil
         }
     }
 

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'KitoButtons'
-  s.version          = '1.8.3'
+  s.version          = '1.8.4'
   s.summary          = 'Themeable SwiftUI buttons with variants, sizes, phases, fly-to-cart and add-to-cart animations.'
   s.description      = <<-DESC
     KitoButtons is a pure-SwiftUI button toolkit: KitoButton (six variants, three sizes, icons,
